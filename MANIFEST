@@ -1,0 +1,13 @@
+Changes
+Fraction.pm
+MANIFEST			This list of files
+Makefile.PL
+README
+t/01_load.t
+t/02_create.t
+t/03_create.t
+t/04_add.t
+t/05_subtract.t
+t/06_multiply.t
+t/07_divide.t
+t/08_compare.t
