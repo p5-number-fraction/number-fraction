@@ -14,6 +14,10 @@
 # $Id$
 #
 # $Log$
+# Revision 1.5  2004/05/22 21:15:10  dave
+# Added more tests.
+# Fixed a couple of bugs that they uncovered.
+#
 # Revision 1.4  2004/04/28 08:37:39  dave
 # Added negative tests to MANIFEST
 #
@@ -61,7 +65,7 @@ sub new {
 
   my $self;
   if (@_ >= 2) {
-    return unless $_[0] =~ /^-?\d+$/ or $_[1] =~ /^-?\d+$/;
+    return unless $_[0] =~ /^-?\d+$/ and $_[1] =~ /^-?\d+$/;
 
     $self->{num} = $_[0];
     $self->{den} = $_[1];

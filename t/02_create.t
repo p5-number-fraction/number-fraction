@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 18 };
+BEGIN { plan tests => 21 };
 use Number::Fraction;
 
 #########################
@@ -14,7 +14,16 @@ use Number::Fraction;
 # Insert your test code below, the Test::More module is use()ed here so read
 # its man page ( perldoc Test::More ) for help writing this test script.
 
-my $f = Number::Fraction->new('1/2');
+my $f = Number::Fraction->new('a', 'b');
+ok(!ref $f);
+
+$f = Number::Fraction->new(1, 'c');
+ok(!ref $f);
+
+$f = eval { Number::Fraction->new([]) };
+ok($@);
+
+$f = Number::Fraction->new('1/2');
 ok(ref $f eq 'Number::Fraction');
 ok($f eq '1/2');
 ok($f == 0.5);

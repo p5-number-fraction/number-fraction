@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 8 };
+BEGIN { plan tests => 11 };
 use Number::Fraction ':constants';
 
 #########################
@@ -25,3 +25,7 @@ ok('1/4' + $f eq '3/4');
 ok('1/4' + $f == 0.75);
 ok('1/2' + '4/8' eq '1/1');
 ok('1/2' + '4/8' == 1);
+ok($f + 0.25 == 0.75);
+ok($f + 1 == 1.5);
+$f = eval { $f + [] };
+ok($@);

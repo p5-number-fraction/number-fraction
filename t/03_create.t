@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 2 };
+BEGIN { plan tests => 4 };
 use Number::Fraction ':constants';
 
 #########################
@@ -17,3 +17,12 @@ use Number::Fraction ':constants';
 my $f = '1/2';
 ok(ref $f eq 'Number::Fraction');
 ok($f eq '1/2');
+
+no Number::Fraction;
+$f = '1/2';
+ok(!ref $f);
+
+use Number::Fraction ':something';
+$f = '1/2';
+ok(!ref $f);
+
