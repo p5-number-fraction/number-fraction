@@ -1,227 +1,4 @@
-#
-# DESCRIPTION:
-#  Number::Fraction is a Perl object that implements rational numbers.
-#
-# AUTHOR
-#  Dave Cross <dave@dave.org.uk>
-#
-# COPYRIGHT
-#   Copyright (C) 2003, Magnum Solutions Ltd.  All Rights Reserved.
-#
-#   This script is free software; you can redistribute it and/or
-#   modify it under the same terms as Perl itself.
-#
 # $Id$
-#
-# $Log$
-# Revision 1.6  2004/05/23 12:18:13  dave
-# Changed pod tests.
-# Updated my email address in Makefile.PL
-#
-# Revision 1.5  2004/05/22 21:15:10  dave
-# Added more tests.
-# Fixed a couple of bugs that they uncovered.
-#
-# Revision 1.4  2004/04/28 08:37:39  dave
-# Added negative tests to MANIFEST
-#
-# Revision 1.3  2004/04/27 13:12:48  dave
-# Added support for negative numbers.
-#
-# Revision 1.2  2003/02/19 20:01:25  dave
-# Correct '+0' to '0+'.
-# Added "fallback" - which allowed me to remove cmp and ncmp.
-#
-#
-
-package Number::Fraction;
-
-use 5.006;
-use strict;
-use warnings;
-
-use Carp;
-
-our $VERSION = sprintf "%d.%02d", '$Revision$ ' =~ /(\d+)\.(\d+)/;
-
-use overload
-  q("") => 'to_string',
-  '0+' => 'to_num',
-  '+' => 'add',
-  '*' => 'mult',
-  '-' => 'subtract',
-  '/' => 'div',
-  fallback => 1;
-
-my %_const_handlers =
-  (q => sub { return __PACKAGE__->new($_[0]) || $_[1] });
-
-sub import {
-  overload::constant %_const_handlers if $_[1] and $_[1] eq ':constants';
-}
-
-sub unimport {
-  overload::remove_constant(q => undef);
-}
-
-sub new {
-  my $class = shift;
-
-  my $self;
-  if (@_ >= 2) {
-    return unless $_[0] =~ /^-?\d+$/ and $_[1] =~ /^-?\d+$/;
-
-    $self->{num} = $_[0];
-    $self->{den} = $_[1];
-  } elsif (@_ == 1) {
-    if (ref $_[0]) {
-      if (UNIVERSAL::isa($_[0], $class)) {
-        return $class->new($_[0]->{num},
-                           $_[0]->{den});
-      } else {
-        croak "Can't make a $class from a ", 
-          ref $_[0];
-	}
-    } else {
-      return unless $_[0] =~ m|^(-?\d+)/(-?\d+)|;
-
-      $self->{num} = $1;
-      $self->{den} = $2;
-    }
-  } else {
-    $self->{num} = 0;
-    $self->{den} = 1;
-  }
-
-  bless $self, $class;
-
-  $self->normalise;
-
-  return $self;
-}
-
-sub normalise {
-  my $self = shift;
-
-  my $hcf = _hcf($self->{num}, $self->{den});
-
-  for (qw/num den/) {
-    $self->{$_} /= $hcf;
-  }
-
-  if ($self->{den} < 0) {
-    for (qw/num den/) {
-      $self->{$_} *= -1;
-    }
-  }
-}
-
-sub to_string {
-  my $self = shift;
-
-  return "$self->{num}/$self->{den}";
-}
-
-sub to_num {
-  my $self = shift;
-
-  return $self->{num} / $self->{den};
-}
-
-sub add {
-  my ($l, $r, $rev) = @_;
-
-  if (ref $r) {
-    if (UNIVERSAL::isa($r, ref $l)) {
-      return (ref $l)->new($l->{num} * $r->{den} + $r->{num} * $l->{den},
-			   $r->{den} * $l->{den});
-    } else {
-      croak "Can't add a ", ref $l, " to a ", ref $l;
-    }
-  } else {
-    if ($r =~ /^[-+]?\d+$/) {
-      return $l + (ref $l)->new($r, 1);
-    } else {
-      return $l->to_num + $r;
-    }
-  }
-}
-
-sub mult {
-  my ($l, $r, $rev) = @_;
-
-  if (ref $r) {
-    if (UNIVERSAL::isa($r, ref $l)) {
-      return (ref $l)->new($l->{num} * $r->{num},
-			   $l->{den} * $r->{den});
-    } else {
-      croak "Can't multiply a ", ref $l, " by a ", ref $l;
-    }
-  } else {
-    if ($r =~ /^[-+]?\d+$/) {
-      return $l * (ref $l)->new($r, 1);
-    } else {
-      return $l->to_num * $r;
-    }
-  }
-}
-
-sub subtract {
-  my ($l, $r, $rev) = @_;
-
-  if (ref $r) {
-    if (UNIVERSAL::isa($r, ref $l)) {
-      return (ref $l)->new($l->{num} * $r->{den} - $r->{num} * $l->{den},
-			   $r->{den} * $l->{den});
-    } else {
-      croak "Can't subtract a ", ref $l, " from a ", ref $l;
-    }
-  } else {
-    if ($r =~ /^[-+]?\d+$/) {
-      $r = (ref $l)->new($r, 1);
-      return $rev ? $r - $l : $l - $r;
-    } else {
-      return $rev ? $r - $l->to_num : $l->to_num - $r;
-    }
-  }
-}
-
-sub div {
-  my ($l, $r, $rev) = @_;
-
-  if (ref $r) {
-    if (UNIVERSAL::isa($r, ref $l)) {
-      return (ref $l)->new($l->{num} * $r->{den},
-			   $l->{den} * $r->{num});
-    } else {
-      croak "Can't divide a ", ref $l, " by a ", ref $l;
-    }
-  } else {
-    if ($r =~ /^[-+]?\d+$/) {
-      $r = (ref $l)->new($r, 1);
-      return $rev ? $r / $l : $l / $r;
-    } else {
-      return $rev ? $r / $l->to_num : $l->to_num / $r;
-    }
-  }
-}
-
-sub _hcf {
-  my ($x, $y) = @_;
-
-  ($x, $y) = ($y, $x) if $y > $x;
-
-  return $x if $x == $y;
-
-  while ($y) {
-    ($x, $y) = ($y, $x % $y);
-  }
-
-  return $x;
-}
-
-1;
-__END__
 
 =head1 NAME
 
@@ -307,6 +84,303 @@ point representation of its value.
 Fraction objects will always "normalise" themselves. That is, if you
 create a fraction of '2/4', it will silently be converted to '1/2'.
 
+=cut
+
+package Number::Fraction;
+
+use 5.006;
+use strict;
+use warnings;
+
+use Carp;
+
+our $VERSION = sprintf "%d.%02d", '$Revision$ ' =~ /(\d+)\.(\d+)/;
+
+use overload
+  q("") => 'to_string',
+  '0+' => 'to_num',
+  '+' => 'add',
+  '*' => 'mult',
+  '-' => 'subtract',
+  '/' => 'div',
+  fallback => 1;
+
+my %_const_handlers =
+  (q => sub { return __PACKAGE__->new($_[0]) || $_[1] });
+
+=head2 import
+
+Called when module is C<use>d. Use to optionally install constant
+handler.
+
+=cut
+
+sub import {
+  overload::constant %_const_handlers if $_[1] and $_[1] eq ':constants';
+}
+
+=head2 unimport
+
+Be a good citizen and uninstall constant handler when caller uses
+C<no Number::Fraction>.
+
+=cut
+
+sub unimport {
+  overload::remove_constant(q => undef);
+}
+
+=head2 new
+
+Constructor for Number::Fraction object. Takes the following kinds of
+parameters:
+
+=over 4
+
+=item *
+
+A single Number::Fraction object which is cloned.
+
+=item *
+
+A string in the form 'x/y' where x and y are integers. x is used as the
+numerator and y is used as the denominator of the new object.
+
+=item *
+
+Two integers which are used as the numerator and denominator of the
+new object.
+
+=item *
+
+A single integer which is used as the numerator of the the new object.
+The denominator is set to 1.
+
+=item *
+
+No arguments, in which case a numerator of 0 and a denominator of 1
+are used.
+
+=back
+
+Returns C<undef> if a Number::Fraction object can't be created.
+
+=cut 
+
+sub new {
+  my $class = shift;
+
+  my $self;
+  if (@_ >= 2) {
+    return unless $_[0] =~ /^-?\d+$/ and $_[1] =~ /^-?\d+$/;
+
+    $self->{num} = $_[0];
+    $self->{den} = $_[1];
+  } elsif (@_ == 1) {
+    if (ref $_[0]) {
+      if (UNIVERSAL::isa($_[0], $class)) {
+        return $class->new($_[0]->{num},
+                           $_[0]->{den});
+      } else {
+        croak "Can't make a $class from a ", 
+          ref $_[0];
+	}
+    } else {
+      return unless $_[0] =~ m|^(-?\d+)/(-?\d+)|;
+
+      $self->{num} = $1;
+      $self->{den} = $2;
+    }
+  } else {
+    $self->{num} = 0;
+    $self->{den} = 1;
+  }
+
+  bless $self, $class;
+
+  $self->_normalise;
+
+  return $self;
+}
+
+sub _normalise {
+  my $self = shift;
+
+  my $hcf = _hcf($self->{num}, $self->{den});
+
+  for (qw/num den/) {
+    $self->{$_} /= $hcf;
+  }
+
+  if ($self->{den} < 0) {
+    for (qw/num den/) {
+      $self->{$_} *= -1;
+    }
+  }
+}
+
+=head2 to_string
+
+Returns a string representation of the fraction in the form
+"numerator/denominator".
+
+=cut
+
+sub to_string {
+  my $self = shift;
+
+  return "$self->{num}/$self->{den}";
+}
+
+=head2 to_num
+
+Returns a numeric representation of the fraction by calculating the sum
+numerator/denominator. Normal caveats about the precision of floating
+point numbers apply.
+
+=cut
+
+sub to_num {
+  my $self = shift;
+
+  return $self->{num} / $self->{den};
+}
+
+=head2 add
+
+Add a value to a fraction object and return a new object representing the
+result of the calculation.
+
+The first parameter is a fraction object. The second parameter is either
+another fraction object or a number.
+
+=cut
+
+sub add {
+  my ($l, $r, $rev) = @_;
+
+  if (ref $r) {
+    if (UNIVERSAL::isa($r, ref $l)) {
+      return (ref $l)->new($l->{num} * $r->{den} + $r->{num} * $l->{den},
+			   $r->{den} * $l->{den});
+    } else {
+      croak "Can't add a ", ref $l, " to a ", ref $l;
+    }
+  } else {
+    if ($r =~ /^[-+]?\d+$/) {
+      return $l + (ref $l)->new($r, 1);
+    } else {
+      return $l->to_num + $r;
+    }
+  }
+}
+
+=head2 mult
+
+Multiply a fraction object by a value and return a new object representing
+the result of the calculation.
+
+The first parameter is a fraction object. The second parameter is either
+another fraction object or a number.
+
+=cut
+
+sub mult {
+  my ($l, $r, $rev) = @_;
+
+  if (ref $r) {
+    if (UNIVERSAL::isa($r, ref $l)) {
+      return (ref $l)->new($l->{num} * $r->{num},
+			   $l->{den} * $r->{den});
+    } else {
+      croak "Can't multiply a ", ref $l, " by a ", ref $l;
+    }
+  } else {
+    if ($r =~ /^[-+]?\d+$/) {
+      return $l * (ref $l)->new($r, 1);
+    } else {
+      return $l->to_num * $r;
+    }
+  }
+}
+
+=head2 subtract
+
+Subtract a value from a fraction object and return a new object representing
+the result of the calculation.
+
+The first parameter is a fraction object. The second parameter is either
+another fraction object or a number.
+
+=cut
+
+sub subtract {
+  my ($l, $r, $rev) = @_;
+
+  if (ref $r) {
+    if (UNIVERSAL::isa($r, ref $l)) {
+      return (ref $l)->new($l->{num} * $r->{den} - $r->{num} * $l->{den},
+			   $r->{den} * $l->{den});
+    } else {
+      croak "Can't subtract a ", ref $l, " from a ", ref $l;
+    }
+  } else {
+    if ($r =~ /^[-+]?\d+$/) {
+      $r = (ref $l)->new($r, 1);
+      return $rev ? $r - $l : $l - $r;
+    } else {
+      return $rev ? $r - $l->to_num : $l->to_num - $r;
+    }
+  }
+}
+
+=head2 div
+
+Divide a fraction object by a value and return a new object representing
+the result of the calculation.
+
+The first parameter is a fraction object. The second parameter is either
+another fraction object or a number.
+
+=cut
+
+sub div {
+  my ($l, $r, $rev) = @_;
+
+  if (ref $r) {
+    if (UNIVERSAL::isa($r, ref $l)) {
+      return (ref $l)->new($l->{num} * $r->{den},
+			   $l->{den} * $r->{num});
+    } else {
+      croak "Can't divide a ", ref $l, " by a ", ref $l;
+    }
+  } else {
+    if ($r =~ /^[-+]?\d+$/) {
+      $r = (ref $l)->new($r, 1);
+      return $rev ? $r / $l : $l / $r;
+    } else {
+      return $rev ? $r / $l->to_num : $l->to_num / $r;
+    }
+  }
+}
+
+sub _hcf {
+  my ($x, $y) = @_;
+
+  ($x, $y) = ($y, $x) if $y > $x;
+
+  return $x if $x == $y;
+
+  while ($y) {
+    ($x, $y) = ($y, $x % $y);
+  }
+
+  return $x;
+}
+
+1;
+__END__
+
 =head2 EXPORT
 
 None by default.
@@ -327,3 +401,27 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+
+#
+# $Log$
+# Revision 1.7  2004/10/23 10:42:56  dave
+# Improved test coverage (to 100% - Go Me!)
+#
+# Revision 1.6  2004/05/23 12:18:13  dave
+# Changed pod tests.
+# Updated my email address in Makefile.PL
+#
+# Revision 1.5  2004/05/22 21:15:10  dave
+# Added more tests.
+# Fixed a couple of bugs that they uncovered.
+#
+# Revision 1.4  2004/04/28 08:37:39  dave
+# Added negative tests to MANIFEST
+#
+# Revision 1.3  2004/04/27 13:12:48  dave
+# Added support for negative numbers.
+#
+# Revision 1.2  2003/02/19 20:01:25  dave
+# Correct '+0' to '0+'.
+# Added "fallback" - which allowed me to remove cmp and ncmp.
+#
