@@ -1,3 +1,25 @@
+#
+# DESCRIPTION:
+#  Number::Fraction is a Perl object that implements rational numbers.
+#
+# AUTHOR
+#  Dave Cross <dave@dave.org.uk>
+#
+# COPYRIGHT
+#   Copyright (C) 2003, Magnum Solutions Ltd.  All Rights Reserved.
+#
+#   This script is free software; you can redistribute it and/or
+#   modify it under the same terms as Perl itself.
+#
+# $Id$
+#
+# $Log$
+# Revision 1.2  2003/02/19 20:01:25  dave
+# Correct '+0' to '0+'.
+# Added "fallback" - which allowed me to remove cmp and ncmp.
+#
+#
+
 package Number::Fraction;
 
 use 5.006;
@@ -6,17 +28,16 @@ use warnings;
 
 use Carp;
 
-our $VERSION = '0.01';
+our $VERSION = sprintf "%d.%02d", '$Revision$ ' =~ /(\d+)\.(\d+)/;
 
 use overload
   q("") => 'to_string',
-  +0 => 'to_num',
+  '0+' => 'to_num',
   '+' => 'add',
   '*' => 'mult',
   '-' => 'subtract',
   '/' => 'div',
-  cmp => 'cmp',
-  '<=>' => 'ncmp';
+  fallback => 1;
 
 my %_const_handlers =
   (q => sub { return __PACKAGE__->new($_[0]) || $_[1] });
@@ -163,24 +184,6 @@ sub div {
       return $rev ? $r / $l->to_num : $l->to_num / $r;
     }
   }
-}
-
-sub cmp {
-  my ($l, $r, $rev) = @_;
-
-  $r = "$r";
-  $l = $l->to_string;
-
-  return $rev ? $l cmp $r : $r cmp $l;
-}
-
-sub ncmp {
-  my ($l, $r, $rev) = @_;
-
-  $r = +$r;
-  $l = $l->to_num;
-
-  return $rev ? $r <=> $l : $l <=> $r;
 }
 
 sub _hcf {
