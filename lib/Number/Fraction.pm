@@ -14,6 +14,10 @@
 # $Id$
 #
 # $Log$
+# Revision 1.6  2004/05/23 12:18:13  dave
+# Changed pod tests.
+# Updated my email address in Makefile.PL
+#
 # Revision 1.5  2004/05/22 21:15:10  dave
 # Added more tests.
 # Fixed a couple of bugs that they uncovered.
@@ -306,8 +310,6 @@ create a fraction of '2/4', it will silently be converted to '1/2'.
 =head2 EXPORT
 
 None by default.
-
-
 
 =head1 SEE ALSO
 
