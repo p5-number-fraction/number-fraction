@@ -14,6 +14,9 @@
 # $Id$
 #
 # $Log$
+# Revision 1.4  2004/04/28 08:37:39  dave
+# Added negative tests to MANIFEST
+#
 # Revision 1.3  2004/04/27 13:12:48  dave
 # Added support for negative numbers.
 #
@@ -211,7 +214,6 @@ sub _hcf {
 
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
