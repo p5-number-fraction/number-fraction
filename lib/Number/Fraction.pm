@@ -401,9 +401,12 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
+ 
 #
 # $Log$
+# Revision 1.8  2005/10/22 21:19:07  dave
+# Added new tests.
+#
 # Revision 1.7  2004/10/23 10:42:56  dave
 # Improved test coverage (to 100% - Go Me!)
 #
