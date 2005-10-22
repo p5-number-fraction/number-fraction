@@ -13,4 +13,5 @@ t/07_divide.t
 t/08_compare.t
 t/09_neg.t
 t/10_pod.t
+t/11_pod_coverage.t
 META.yml                                 Module meta-data (added by MakeMaker)
