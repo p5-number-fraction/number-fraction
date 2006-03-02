@@ -186,10 +186,10 @@ sub new {
           ref $_[0];
 	}
     } else {
-      return unless $_[0] =~ m|^(-?\d+)/(-?\d+)|;
+      return unless $_[0] =~ m|^(-?\d+)(?:/(-?\d+))?$|;
 
       $self->{num} = $1;
-      $self->{den} = $2;
+      $self->{den} = defined $2 ? $2 : 1;
     }
   } else {
     $self->{num} = 0;
@@ -229,7 +229,11 @@ Returns a string representation of the fraction in the form
 sub to_string {
   my $self = shift;
 
-  return "$self->{num}/$self->{den}";
+  if ($self->{den} == 1) {
+    return $self->{num};
+  } else {
+    return "$self->{num}/$self->{den}";
+  }
 }
 
 =head2 to_num
@@ -404,6 +408,9 @@ it under the same terms as Perl itself.
  
 #
 # $Log$
+# Revision 1.9  2006/03/02 13:00:05  dave
+# A couple of patches supplied by David Westbrook.
+#
 # Revision 1.8  2005/10/22 21:19:07  dave
 # Added new tests.
 #

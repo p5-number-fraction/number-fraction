@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-BEGIN { plan tests => 21 };
+BEGIN { plan tests => 33 };
 use Number::Fraction;
 
 #########################
@@ -40,15 +40,35 @@ ok($f1 == 0.5);
 
 $f1 = Number::Fraction->new;
 ok(ref $f1 eq 'Number::Fraction');
-ok($f1 eq '0/1');
+ok($f1 eq '0');
 ok($f1 == 0);
 
 my $f2 = Number::Fraction->new(4, 8);
-ok(ref $f eq 'Number::Fraction');
-ok($f eq '1/2');
-ok($f == 0.5);
+ok(ref $f2 eq 'Number::Fraction');
+ok($f2 eq '1/2');
+ok($f2 == 0.5);
 
 $f2 = Number::Fraction->new('4/8');
-ok(ref $f eq 'Number::Fraction');
-ok($f eq '1/2');
-ok($f == 0.5);
+ok(ref $f2 eq 'Number::Fraction');
+ok($f2 eq '1/2');
+ok($f2 == 0.5);
+
+my $f3 = Number::Fraction->new(2, 1);
+ok(ref $f3 eq 'Number::Fraction');
+ok($f3 eq '2');
+ok($f3 == 2);
+
+$f3 = Number::Fraction->new('2/1');
+ok(ref $f3 eq 'Number::Fraction');
+ok($f3 eq '2');
+ok($f3 == 2);
+
+$f3 = Number::Fraction->new(2);
+ok(ref $f3 eq 'Number::Fraction');
+ok($f3 eq '2');
+ok($f3 == 2);
+
+$f3 = Number::Fraction->new('2');
+ok(ref $f3 eq 'Number::Fraction');
+ok($f3 eq '2');
+ok($f3 == 2);
