@@ -1,10 +1,12 @@
 use Module::Build;
 my $build = Module::Build->new(
 	module_name => 'Number::Fraction',
-	dist_version => '1.10',
+	dist_version => '1.11',
 	license => 'perl',
 	requires => {
 		perl		      => '5.6.0',
+		Carp                  => 0,
+		overload              => 0,
 	},
 	build_requires => {
 		'Test::More'	      => 0,
