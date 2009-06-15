@@ -94,7 +94,7 @@ use warnings;
 
 use Carp;
 
-our $VERSION = sprintf "%d", '$Revision$ ' =~ /(\d+)/;
+our $VERSION = '1.12';
 
 use overload
   q("") => 'to_string',
@@ -172,7 +172,7 @@ sub new {
 
   my $self;
   if (@_ >= 2) {
-    return unless $_[0] =~ /^-?\d+$/ and $_[1] =~ /^-?\d+$/;
+    return unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
 
     $self->{num} = $_[0];
     $self->{den} = $_[1];
@@ -186,7 +186,7 @@ sub new {
           ref $_[0];
 	}
     } else {
-      return unless $_[0] =~ m|^(-?\d+)(?:/(-?\d+))?$|;
+      return unless $_[0] =~ m|^(-?[0-9]+)(?:/(-?[0-9]+))?\z|;
 
       $self->{num} = $1;
       $self->{den} = defined $2 ? $2 : 1;
