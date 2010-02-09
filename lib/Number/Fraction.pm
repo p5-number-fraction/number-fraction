@@ -15,9 +15,10 @@ Number::Fraction - Perl extension to model fractions
 
 or
 
-  use Number::Fraction ':constants'
+  use Number::Fraction ':constants';
 
   my $f1 = '1/2';
+  my $f2 = $f1;
 
   my $one = $f1 + $f2;
   my $half = $one - $f1;
