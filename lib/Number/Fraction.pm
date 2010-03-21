@@ -1,4 +1,3 @@
-# $Id$
 
 =head1 NAME
 
@@ -85,6 +84,28 @@ point representation of its value.
 Fraction objects will always "normalise" themselves. That is, if you
 create a fraction of '2/4', it will silently be converted to '1/2'.
 
+=head2 Experimental Support for Exponentiation
+
+Version 1.13 of Number::Fraction adds experimental support for exponentiation
+operations. If a Number::Fraction object is used as the left hand operand of
+an exponentiation expression then the value returned will be another
+Number::Fraction object - if that makes sense. In all other cases, the
+expression returns a real number.
+
+Currently this only works if the right hand operand is an integer (or
+a Number::Fraction object that has a numerator of 1). Later I hope to
+extend this so support so that a Number::Fraction object is returned
+whenever the result of the expression is a rational number.
+
+For example:
+
+  '1/2' ** 2 #   Returns a Number::Fraction ('1/4')
+  '2/1' ** '2/1' Returns a Number::Fraction ('4/1')
+  '2/1' ** '1/2' Returns a real number (1.414213)
+   0.5  ** '2/1' Returns a real number (0.25)
+
+=head1 METHODS
+
 =cut
 
 package Number::Fraction;
@@ -95,7 +116,7 @@ use warnings;
 
 use Carp;
 
-our $VERSION = '1.12';
+our $VERSION = '1.13';
 
 use overload
   q("") => 'to_string',
@@ -369,6 +390,18 @@ sub div {
     }
   }
 }
+
+=head2 exp
+
+Raise a Number::Fraction object to a power.
+
+The first argument is a number fraction object. The second argument is
+another Number::Fraction object or a number. If the second argument is
+an integer or a Number::Fraction object containing an integer then the
+value returned is a Number::Fraction object, otherwise the value returned
+is a real number.
+
+=cut
 
 sub exp {
   my ($l, $r, $rev) = @_;
