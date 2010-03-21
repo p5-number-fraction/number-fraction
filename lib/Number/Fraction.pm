@@ -104,6 +104,7 @@ use overload
   '*' => 'mult',
   '-' => 'subtract',
   '/' => 'div',
+  '**' => 'exp',
   fallback => 1;
 
 my %_const_handlers =
@@ -366,6 +367,26 @@ sub div {
     } else {
       return $rev ? $r / $l->to_num : $l->to_num / $r;
     }
+  }
+}
+
+sub exp {
+  my ($l, $r, $rev) = @_;
+
+  if ($rev) {
+    return $r ** $l->to_num;
+  }  
+
+  if (UNIVERSAL::isa($r, ref $l)) {
+    if ($r->{den} == 1) {
+      return $l ** $r->to_num;
+    } else {
+      return $l->to_num ** $r->to_num;
+    }
+  } elsif ($r =~ /^[-+]?\d+$/) {
+    return (ref $l)->new($l->{num} ** $r, $l->{den} ** $r);
+  } else {
+    croak "Can't raise $l to the power $r\n";
   }
 }
 
