@@ -126,6 +126,7 @@ use overload
   '-' => 'subtract',
   '/' => 'div',
   '**' => 'exp',
+  'abs' => 'abs',
   fallback => 1;
 
 my %_const_handlers =
@@ -421,6 +422,19 @@ sub exp {
   } else {
     croak "Can't raise $l to the power $r\n";
   }
+}
+
+=head2 abs
+
+Returns a copy of the given object with both the numerator and
+denominator changed to positive values.
+
+=cut
+
+sub abs {
+  my $self = shift;
+
+  return (ref $self)->new(abs($self->{num}), abs($self->{den}));
 }
 
 sub _hcf {
