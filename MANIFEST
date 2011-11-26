@@ -16,3 +16,4 @@ t/09_neg.t
 t/10_pod.t
 t/11_pod_coverage.t
 META.yml
+META.json
