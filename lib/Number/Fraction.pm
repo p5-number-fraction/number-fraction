@@ -93,7 +93,7 @@ Number::Fraction object - if that makes sense. In all other cases, the
 expression returns a real number.
 
 Currently this only works if the right hand operand is an integer (or
-a Number::Fraction object that has a numerator of 1). Later I hope to
+a Number::Fraction object that has a denominator of 1). Later I hope to
 extend this so support so that a Number::Fraction object is returned
 whenever the result of the expression is a rational number.
 
