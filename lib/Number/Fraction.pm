@@ -116,7 +116,7 @@ use warnings;
 
 use Carp;
 
-our $VERSION = '1.13';
+our $VERSION = '1.14';
 
 use overload
   q("") => 'to_string',
