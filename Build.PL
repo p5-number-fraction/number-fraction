@@ -6,6 +6,7 @@ my $build = Module::Build->new(
 		perl		      => '5.6.0',
 		Carp                  => 0,
 		overload              => 0,
+                Moose                 => 0,
 	},
 	build_requires => {
 		'Test::More'	      => 0,
