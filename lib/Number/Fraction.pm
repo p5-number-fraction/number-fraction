@@ -104,6 +104,15 @@ For example:
   '2/1' ** '1/2' Returns a real number (1.414213)
    0.5  ** '2/1' Returns a real number (0.25)
 
+=head2 Version 2: Now With Added Moose
+
+Version 2 of Number::Fraction has been reimplemented using Moose. You should
+see very little difference in the way that the class works. The only difference
+I can see is that C<new> used to return C<undef> if it couldn't create a valid
+object from its arguments, it now dies. If you aren't sure of the values that
+are being passed into the constructor, then you'll want to call it within an
+C<eval { ... }> block (or using something equivalent like L<Try::Tiny>).
+
 =head1 METHODS
 
 =cut
@@ -117,17 +126,17 @@ use warnings;
 use Carp;
 use Moose;
 
-our $VERSION = '1.14';
+our $VERSION = '2.00';
 
 use overload
-  q("") => 'to_string',
-  '0+' => 'to_num',
-  '+' => 'add',
-  '*' => 'mult',
-  '-' => 'subtract',
-  '/' => 'div',
-  '**' => 'exp',
-  'abs' => 'abs',
+  q("")    => 'to_string',
+  '0+'     => 'to_num',
+  '+'      => 'add',
+  '*'      => 'mult',
+  '-'      => 'subtract',
+  '/'      => 'div',
+  '**'     => 'exp',
+  'abs'    => 'abs',
   fallback => 1;
 
 my %_const_handlers = (
@@ -203,7 +212,7 @@ are used.
 
 =back
 
-Returns C<undef> if a Number::Fraction object can't be created.
+Dies if a Number::Fraction object can't be created.
 
 =cut 
 
