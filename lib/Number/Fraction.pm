@@ -221,7 +221,8 @@ around BUILDARGS => sub {
   my $class = shift;
 
   if (@_ >= 2) {
-    die "numinator and denominator both need to be integers" unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
+    die "numerator and denominator both need to be integers"
+      unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
 
     return $class->$orig({ num => $_[0], den => $_[1] });
   } elsif (@_ == 1) {
@@ -232,7 +233,8 @@ around BUILDARGS => sub {
         die "Can't make a $class from a ", ref $_[0];
       }
     } else {
-      die "numinator and denominator both need to be integers" unless $_[0] =~ m|^(-?[0-9]+)(?:/(-?[0-9]+))?\z|;
+      die "numerator and denominator both need to be integers"
+        unless $_[0] =~ m|^(-?[0-9]+)(?:/(-?[0-9]+))?\z|;
 
       return $class->$orig({ num => $1, den => ( defined $2 ? $2 : 1) });
     }
@@ -250,7 +252,7 @@ normalised format.
 
 sub BUILD {
   my $self = shift;
-  die "Denominator can\'t be equal to \'zero\'" if $self->{den} == 0;
+  die "Denominator can't be equal to zero" if $self->{den} == 0;
   $self->_normalise;
 }
 
