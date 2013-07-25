@@ -126,7 +126,7 @@ use warnings;
 use Carp;
 use Moose;
 
-our $VERSION = '2.00';
+our $VERSION = '2.01';
 
 use overload
   q("")    => 'to_string',
@@ -221,7 +221,7 @@ around BUILDARGS => sub {
   my $class = shift;
 
   if (@_ >= 2) {
-    die unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
+    die "numinator and denominator both need to be integers" unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
 
     return $class->$orig({ num => $_[0], den => $_[1] });
   } elsif (@_ == 1) {
@@ -232,7 +232,7 @@ around BUILDARGS => sub {
         die "Can't make a $class from a ", ref $_[0];
       }
     } else {
-      die unless $_[0] =~ m|^(-?[0-9]+)(?:/(-?[0-9]+))?\z|;
+      die "numinator and denominator both need to be integers" unless $_[0] =~ m|^(-?[0-9]+)(?:/(-?[0-9]+))?\z|;
 
       return $class->$orig({ num => $1, den => ( defined $2 ? $2 : 1) });
     }
@@ -250,6 +250,7 @@ normalised format.
 
 sub BUILD {
   my $self = shift;
+  die "Denominator can\'t be equal to \'zero\'" if $self->{den} == 0;
   $self->_normalise;
 }
 
@@ -403,6 +404,7 @@ sub div {
 
   if (ref $r) {
     if (UNIVERSAL::isa($r, ref $l)) {
+      die "FATAL ERROR: Division by zero" if $r->{num} == 0;
       return (ref $l)->new($l->{num} * $r->{den},
                            $l->{den} * $r->{num});
     } else {
@@ -476,6 +478,8 @@ sub _hcf {
 
   return $x;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 __END__
