@@ -27,3 +27,4 @@ ok($@, "Numerator can't be a decimal");
 $fract = eval {Number::Fraction->new(3 , 4.5) };
 ok($@, "Denominator can't be a decimal");
 
+# more changes
