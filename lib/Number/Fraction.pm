@@ -155,7 +155,7 @@ handler.
 =cut
 
 sub import {
-  overload::constant %_const_handlers if $_[1] and $_[1] eq ':constants';
+    overload::constant %_const_handlers if ( grep { $_ eq ':constants' } @_ );
 }
 
 =head2 unimport
