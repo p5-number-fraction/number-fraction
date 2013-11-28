@@ -128,6 +128,8 @@ use Moose;
 
 our $VERSION = '2.01';
 
+our $_mixed = 0;
+
 use overload
   q("")    => 'to_string',
   '0+'     => 'to_num',
@@ -155,6 +157,7 @@ handler.
 =cut
 
 sub import {
+    $_mixed = 1 if ( grep { $_ eq ':mixed' } @_ );
     overload::constant %_const_handlers if ( grep { $_ eq ':constants' } @_ );
 }
 
@@ -167,6 +170,7 @@ C<no Number::Fraction>.
 
 sub unimport {
   overload::remove_constant(q => undef);
+  $_mixed = undef;
 }
 
 has num => (
@@ -219,12 +223,20 @@ Dies if a Number::Fraction object can't be created.
 around BUILDARGS => sub {
   my $orig = shift;
   my $class = shift;
-
   if (@_ > 3) {
     carp "Revise your code: too many arguments will raise an exception";
   }
   if (@_ == 3) {
-    carp "Revise your code: 3 arguments will become mixed-fraction feature!";
+    if ( $_mixed ) {
+      carp "mixed-fraction not implemented yet";
+      die "integer, numerator and denominator need to be integers"
+        unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/ and $_[2] =~ /^-?[0-9]+\z/;
+
+      return $class->$orig({ num => $_[0] * $_[2] + $_[1], den => $_[2] });
+    }
+    else { 
+      carp "Revise your code: 3 arguments will become mixed-fraction feature!";
+    }
   }
   if (@_ >= 2) {
     die "numerator and denominator both need to be integers"
