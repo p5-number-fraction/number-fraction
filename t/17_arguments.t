@@ -1,4 +1,4 @@
-use Test::More;
+use Test::More 'no_plan';
 use Number::Fraction;
 
 eval "use Test::Warn";
