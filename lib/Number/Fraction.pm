@@ -220,6 +220,12 @@ around BUILDARGS => sub {
   my $orig = shift;
   my $class = shift;
 
+  if (@_ > 3) {
+    carp "Revise your code: too many arguments will raise an exception";
+  }
+  if (@_ == 3) {
+    carp "Revise your code: 3 arguments will become mixed-fraction feature!";
+  }
   if (@_ >= 2) {
     die "numerator and denominator both need to be integers"
       unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
