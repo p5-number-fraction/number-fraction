@@ -228,7 +228,6 @@ around BUILDARGS => sub {
   }
   if (@_ == 3) {
     if ( $_mixed ) {
-      carp "mixed-fraction not implemented yet";
       die "integer, numerator and denominator need to be integers"
         unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/ and $_[2] =~ /^-?[0-9]+\z/;
 
