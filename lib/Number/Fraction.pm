@@ -220,6 +220,8 @@ Dies if a Number::Fraction object can't be created.
 
 =cut 
 
+use charnames ':full';
+
 around BUILDARGS => sub {
   my $orig = shift;
   my $class = shift;
@@ -237,9 +239,10 @@ around BUILDARGS => sub {
       carp "Revise your code: 3 arguments will become mixed-fraction feature!";
     }
   }
-  if (@_ >= 2) {
+  if (@_ == 2) {
     die "numerator and denominator both need to be integers"
       unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
+print "$_[0], $_[1]\n";
 
     return $class->$orig({ num => $_[0], den => $_[1] });
   } elsif (@_ == 1) {
@@ -249,11 +252,18 @@ around BUILDARGS => sub {
       } else {
         die "Can't make a $class from a ", ref $_[0];
       }
+    } elsif ($_[0] =~ m|^(-?)([0-9]+)\N{VULGAR FRACTION ONE HALF}\z|) {
+        return $class->$orig({ num => $2 * 02 + 01, den=> ($1 eq '-') ? 02 * -1 : 02});
+    } elsif ($_[0] =~ m|^(-?)([0-9]+)\N{VULGAR FRACTION ONE QUARTER}\z|) {
+        return $class->$orig({ num => $2 * 04 + 01, den=> ($1 eq '-') ? 04 * -1 : 04});
+    } elsif ($_[0] =~ m|^(-?)([0-9]+)\N{VULGAR FRACTION ONE FIFTH}\z|) {
+        return $class->$orig({ num => $2 * 05 + 01, den=> ($1 eq '-') ? 05 * -1 : 05});
+    } elsif ($_[0] =~ m|^(-?)([0-9]+)_([0-9]+)/([0-9]+)\z|) { # Perl notation
+        return $class->$orig({ num => $2 * $4 + $3, den=> ($1 eq '-') ? $4 * -1 : $4});
+    } elsif ($_[0] =~ m|^(-?[0-9]+)(?:/(-?[0-9]+))?\z|) {
+        return $class->$orig({ num => $1, den => ( defined $2 ? $2 : 1) });
     } else {
-      die "numerator and denominator both need to be integers"
-        unless $_[0] =~ m|^(-?[0-9]+)(?:/(-?[0-9]+))?\z|;
-
-      return $class->$orig({ num => $1, den => ( defined $2 ? $2 : 1) });
+        die "Can't make fraction out of $_[0]\n";
     }
   } else {
     return $class->$orig({ num => 0, den => 1 });

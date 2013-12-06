@@ -1,7 +1,7 @@
 use Test::More 'no_plan';
 use Number::Fraction ':constants';
 
-use UTF8;
+use utf8;
 TODO: {
   local $TODO = "reading and writing mixed fractions as simple 'ASCII' strings";
 
