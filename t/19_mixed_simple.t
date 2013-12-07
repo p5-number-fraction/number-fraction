@@ -2,8 +2,6 @@ use Test::More 'no_plan';
 use Number::Fraction ':constants';
 
 use utf8;
-TODO: {
-  local $TODO = "reading and writing mixed fractions as simple 'ASCII' strings";
 
 my $f = undef;
 
@@ -44,5 +42,4 @@ cmp_ok ($f, '==', -2.50, "minus two and a half");
 $f = '-½';
 cmp_ok ($f, '==', -0.50, "just minus a half");
 
-}
 

@@ -222,6 +222,24 @@ Dies if a Number::Fraction object can't be created.
 
 use charnames ':full';
 
+our @_vulgar_fractions = (
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE HALF}\z|,       [1, 2]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE QUARTER}\z|,    [1, 4]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE QUARTERS}\z|, [3, 4]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE EIGHTH}\z|,     [1, 8]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE EIGHTHS}\z|,  [3, 8]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FIVE EIGHTHS}\z|,   [5, 8]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION SEVEN EIGHTHS}\z|,  [7, 8]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE THIRD}\z|,      [1, 3]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION TWO THIRDS}\z|,     [2, 3]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE SIXTH}\z|,      [1, 6]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FIVE SIXTHS}\z|,    [5, 6]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE FIFTH}\z|,      [1, 5]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION TWO FIFTHS}\z|,     [2, 5]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE FIFTHS}\z|,   [3, 5]],
+  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FOUR FIFTHS}\z|,    [4, 5]],
+); # thank you Getty
+
 around BUILDARGS => sub {
   my $orig = shift;
   my $class = shift;
@@ -231,7 +249,9 @@ around BUILDARGS => sub {
   if (@_ == 3) {
     if ( $_mixed ) {
       die "integer, numerator and denominator need to be integers"
-        unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/ and $_[2] =~ /^-?[0-9]+\z/;
+        unless $_[0] =~ /^-?[0-9]+\z/
+           and $_[1] =~ /^-?[0-9]+\z/
+           and $_[2] =~ /^-?[0-9]+\z/;
 
       return $class->$orig({ num => $_[0] * $_[2] + $_[1], den => $_[2] });
     }
@@ -239,11 +259,9 @@ around BUILDARGS => sub {
       carp "Revise your code: 3 arguments will become mixed-fraction feature!";
     }
   }
-  if (@_ == 2) {
+  if (@_ >= 2) {
     die "numerator and denominator both need to be integers"
       unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
-print "$_[0], $_[1]\n";
-
     return $class->$orig({ num => $_[0], den => $_[1] });
   } elsif (@_ == 1) {
     if (ref $_[0]) {
@@ -252,14 +270,27 @@ print "$_[0], $_[1]\n";
       } else {
         die "Can't make a $class from a ", ref $_[0];
       }
-    } elsif ($_[0] =~ m|^(-?)([0-9]+)\N{VULGAR FRACTION ONE HALF}\z|) {
-        return $class->$orig({ num => $2 * 02 + 01, den=> ($1 eq '-') ? 02 * -1 : 02});
-    } elsif ($_[0] =~ m|^(-?)([0-9]+)\N{VULGAR FRACTION ONE QUARTER}\z|) {
-        return $class->$orig({ num => $2 * 04 + 01, den=> ($1 eq '-') ? 04 * -1 : 04});
-    } elsif ($_[0] =~ m|^(-?)([0-9]+)\N{VULGAR FRACTION ONE FIFTH}\z|) {
-        return $class->$orig({ num => $2 * 05 + 01, den=> ($1 eq '-') ? 05 * -1 : 05});
-    } elsif ($_[0] =~ m|^(-?)([0-9]+)_([0-9]+)/([0-9]+)\z|) { # Perl notation
-        return $class->$orig({ num => $2 * $4 + $3, den=> ($1 eq '-') ? $4 * -1 : $4});
+    }
+    
+    for (@_vulgar_fractions) {
+      if ($_[0] =~ m/$_->[0]/ ) {
+        return $class->$orig({
+            num => (defined $2 ? $2 : 0) * $_->[1]->[1] + $_->[1]->[0],
+            den=> ($1 eq '-') ? $_->[1]->[1] * -1 : $_->[1]->[1],
+            }
+        );
+      }
+    }
+    
+    
+    
+    
+    
+    if ($_[0] =~ m|^(-?)([0-9]+)_([0-9]+)/([0-9]+)\z|) { # Perl notation
+        return $class->$orig({
+          num => $2 * $4 + $3,
+          den=> ($1 eq '-') ? $4 * -1 : $4}
+        );
     } elsif ($_[0] =~ m|^(-?[0-9]+)(?:/(-?[0-9]+))?\z|) {
         return $class->$orig({ num => $1, den => ( defined $2 ? $2 : 1) });
     } else {
