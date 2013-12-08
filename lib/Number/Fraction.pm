@@ -220,25 +220,43 @@ Dies if a Number::Fraction object can't be created.
 
 =cut 
 
-use charnames ':full';
-
 our @_vulgar_fractions = (
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE HALF}\z|,       [1, 2]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE QUARTER}\z|,    [1, 4]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE QUARTERS}\z|, [3, 4]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE EIGHTH}\z|,     [1, 8]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE EIGHTHS}\z|,  [3, 8]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FIVE EIGHTHS}\z|,   [5, 8]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION SEVEN EIGHTHS}\z|,  [7, 8]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE THIRD}\z|,      [1, 3]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION TWO THIRDS}\z|,     [2, 3]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE SIXTH}\z|,      [1, 6]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FIVE SIXTHS}\z|,    [5, 6]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE FIFTH}\z|,      [1, 5]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION TWO FIFTHS}\z|,     [2, 5]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE FIFTHS}\z|,   [3, 5]],
-  [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FOUR FIFTHS}\z|,    [4, 5]],
-); # thank you Getty
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+00BC}\z|, num=>1, den=>4},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+00BD}\z|, num=>1, den=>2},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+00BE}\z|, num=>3, den=>4},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+2153}\z|, num=>1, den=>3},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+2154}\z|, num=>2, den=>3},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+2155}\z|, num=>1, den=>5},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+2156}\z|, num=>2, den=>5},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+2157}\z|, num=>3, den=>5},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+2158}\z|, num=>4, den=>5},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+2159}\z|, num=>1, den=>6},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+215A}\z|, num=>5, den=>6},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+215B}\z|, num=>1, den=>8},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+215C}\z|, num=>3, den=>8},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+215D}\z|, num=>5, den=>8},
+  {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+215E}\z|, num=>7, den=>8},
+);
+
+# use charnames ':full';
+#
+#our @_vulgar_fractions = (
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE HALF}\z|,       [1, 2]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE QUARTER}\z|,    [1, 4]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE QUARTERS}\z|, [3, 4]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE EIGHTH}\z|,     [1, 8]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE EIGHTHS}\z|,  [3, 8]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FIVE EIGHTHS}\z|,   [5, 8]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION SEVEN EIGHTHS}\z|,  [7, 8]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE THIRD}\z|,      [1, 3]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION TWO THIRDS}\z|,     [2, 3]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE SIXTH}\z|,      [1, 6]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FIVE SIXTHS}\z|,    [5, 6]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE FIFTH}\z|,      [1, 5]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION TWO FIFTHS}\z|,     [2, 5]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE FIFTHS}\z|,   [3, 5]],
+# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FOUR FIFTHS}\z|,    [4, 5]],
+#; # thank you Getty
 
 around BUILDARGS => sub {
   my $orig = shift;
@@ -272,11 +290,21 @@ around BUILDARGS => sub {
       }
     }
     
+#   for (@_vulgar_fractions) {
+#     if ($_[0] =~ m/$_->[0]/ ) {
+#       return $class->$orig({
+#           num => (defined $2 ? $2 : 0) * $_->[1]->[1] + $_->[1]->[0],
+#           den=> ($1 eq '-') ? $_->[1]->[1] * -1 : $_->[1]->[1],
+#           }
+#       );
+#     }
+#   }
+    
     for (@_vulgar_fractions) {
-      if ($_[0] =~ m/$_->[0]/ ) {
+      if ($_[0] =~ m/$_->{regexp}/ ) {
         return $class->$orig({
-            num => (defined $2 ? $2 : 0) * $_->[1]->[1] + $_->[1]->[0],
-            den=> ($1 eq '-') ? $_->[1]->[1] * -1 : $_->[1]->[1],
+            num => (defined $+{int} ? $+{int} : 0) * $_->{den} + $_->{num},
+            den=> ($+{sign} eq '-') ? $_->{den} * -1 : $_->{den},
             }
         );
       }

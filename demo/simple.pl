@@ -1,6 +1,7 @@
 use Number::Fraction ':constants';
+use utf8;
 
-print '2¼' ** '2¼'; # will print 4½
+print 4 ** '-½' ,"\n";
 
 # 9/4 / 1/2
 
