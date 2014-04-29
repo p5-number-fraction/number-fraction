@@ -42,4 +42,3 @@ cmp_ok ($f, '==', -2.50, "minus two and a half");
 $f = '-½';
 cmp_ok ($f, '==', -0.50, "just minus a half");
 
-

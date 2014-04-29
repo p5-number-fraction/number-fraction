@@ -1,4 +1,3 @@
-
 =head1 NAME
 
 Number::Fraction - Perl extension to model fractions
@@ -47,6 +46,11 @@ a number of ways.
 
 creates a fraction with a numerator of 1 and a denominator of 2.
 
+  my $fm = Number::Fraction->new(1, 2, 3);
+
+creates a fraction from an integer of 1, a numerator of 2 and a denominator
+of 3; which results in a fraction of 5/3 since fractions are normalised.
+
   my $f2 = Number::Fraction->new('1/2');
 
 does the same thing but from a string constant.
@@ -83,6 +87,25 @@ point representation of its value.
 
 Fraction objects will always "normalise" themselves. That is, if you
 create a fraction of '2/4', it will silently be converted to '1/2'.
+
+=head2 Mixed Fractions and Unicode Support
+
+Since version 3.0 the interpretation of strings and constants has been
+enriched with a few features for mixed fractions and Unicode characters.
+
+Number::Fraction now recognises a more Perlish way of entering mixed fractions which consist of an integer-part and a fraction in the form of
+C<\d+_\d+/\d+>. For example
+
+  my $mixed = '2_3/4'; # two and three fourths, stored as 11/4
+
+or
+
+  my $simple = '2½'; # two and a half, stored as 5/2
+
+Mixed fractions, either in Perl notation or with Unicode fractions can
+be negative, prepending it with a minus-sign.
+
+  my $negative = '-⅛'; # minus one eighth
 
 =head2 Experimental Support for Exponentiation
 
@@ -199,6 +222,23 @@ A single Number::Fraction object which is cloned.
 A string in the form 'x/y' where x and y are integers. x is used as the
 numerator and y is used as the denominator of the new object.
 
+A string in the form 'a_b/c' where a,b and c are integers.
+The numerator will be equal to a*c+b!
+and c is used as the denominator of the new object.
+
+=item *
+
+Three integers which are used as the integer, numerator and denominator of the
+new object.
+
+In order for this to work in version 2.x,
+one needs to enable 'mixed' fractions:
+
+  use Number::Fractions ':mixed';
+
+This will be the default behaviour in version 3.x;
+when not enabled in version 2.x it will omit a warning to revise your code. 
+
 =item *
 
 Two integers which are used as the numerator and denominator of the
@@ -213,6 +253,14 @@ The denominator is set to 1.
 
 No arguments, in which case a numerator of 0 and a denominator of 1
 are used.
+
+=item Note
+
+As of version 2.1 it no longer allows for an array of four or more integer.
+Before then, it would simply pass in the first two integers. Version 2.1 allows
+for three integers (when using C<:mixed>) and issues a warning when more then two
+parameters are passed.
+Starting with version 3, it will die as it is seen as an error to pass invalid input.
 
 =back
 
@@ -294,7 +342,7 @@ around BUILDARGS => sub {
 #     if ($_[0] =~ m/$_->[0]/ ) {
 #       return $class->$orig({
 #           num => (defined $2 ? $2 : 0) * $_->[1]->[1] + $_->[1]->[0],
-#           den=> ($1 eq '-') ? $_->[1]->[1] * -1 : $_->[1]->[1],
+#           den => ($1 eq '-') ? $_->[1]->[1] * -1 : $_->[1]->[1],
 #           }
 #       );
 #     }
@@ -304,17 +352,14 @@ around BUILDARGS => sub {
       if ($_[0] =~ m/$_->{regexp}/ ) {
         return $class->$orig({
             num => (defined $+{int} ? $+{int} : 0) * $_->{den} + $_->{num},
-            den=> ($+{sign} eq '-') ? $_->{den} * -1 : $_->{den},
+            den => ($+{sign} eq '-') ? $_->{den} * -1 : $_->{den},
             }
         );
       }
     }
-    
-    
-    
-    
-    
-    if ($_[0] =~ m|^(-?)([0-9]+)_([0-9]+)/([0-9]+)\z|) { # Perl notation
+        
+    if ($_[0] =~ m|^(-?)([0-9]+)[_ ]([0-9]+)/([0-9]+)\z|) { # Allow for space ?
+#   if ($_[0] =~ m|^(-?)([0-9]+)_([0-9]+)/([0-9]+)\z|) { # Perl notation
         return $class->$orig({
           num => $2 * $4 + $3,
           den=> ($1 eq '-') ? $4 * -1 : $4}
@@ -592,3 +637,4 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+
