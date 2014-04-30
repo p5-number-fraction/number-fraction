@@ -1,4 +1,4 @@
-use Test::More tests => 3;
+use Test::More tests => 4;
 use Number::Fraction ':constants';
 
 use utf8;
@@ -13,4 +13,7 @@ cmp_ok ($f, 'eq', "0123456789+-=()", "Translate from subscript");
 
 $f = '¹²³⁴⁵⁶⁷⁸⁹⁰⁄₁₂₃₄₅₆₇₈₉₀';
 cmp_ok ($f, '==', 1, "Super- & subscript digits");
+
+$f = '-2³⁄₂₀';
+cmp_ok ($f, '==', -2.15, "minus two three-twentieths");
 

@@ -348,7 +348,7 @@ around BUILDARGS => sub {
 #     }
 #   }
     
-    for (@_vulgar_fractions) {
+    for (@_vulgar_fractions) { # provides $_->{num} and $_->{den}
       if ($_[0] =~ m/$_->{regexp}/ ) {
         return $class->$orig({
             num => (defined $+{int} ? $+{int} : 0) * $_->{den} + $_->{num},
@@ -356,6 +356,24 @@ around BUILDARGS => sub {
             }
         );
       }
+    }
+
+    if ($_[0] =~ m|
+         ^
+         (?<sign>-?)
+         (?<int>[0-9]+)?
+         (?<num>[\N{U+2070}\N{U+00B9}\N{U+00B2}\N{U+00B3}\N{U+2074}-\N{U+207B}]+)
+         \N{U+2044} # FRACTION SLASH
+         (?<den>[\N{U+2080}-\N{U+208B}]+)
+         \z
+         |x ) {
+      my $num = _sup_to_basic($+{num});
+      my $den = _sub_to_basic($+{den});
+      return $class->$orig({
+        num => (defined $+{int} ? $+{int} : 0) * $den + $num,
+        den => ($+{sign} eq '-') ? $den * -1 : $den,
+        }
+      );
     }
         
     if ($_[0] =~ m|^(-?)([0-9]+)[_ ]([0-9]+)/([0-9]+)\z|) { # Allow for space ?
