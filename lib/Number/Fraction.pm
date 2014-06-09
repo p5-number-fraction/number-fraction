@@ -441,6 +441,27 @@ sub to_string {
   }
 }
 
+
+=head2 to_mixed
+
+Returns a string representation of the fraction in the form
+"integer numerator/denominator".
+
+=cut
+
+sub to_mixed {
+  my $self = shift;
+
+  if ($self->{den} == 1) {
+    return $self->{num};
+  } else {
+    my $int = int($self->{num}/$self->{den});
+    return $int . "_" . abs($self->{num}) % $self->{den} . "/" . $self->{den} if $int;
+    return "$self->{num}/$self->{den}";
+  }
+}
+
+
 =head2 to_num
 
 Returns a numeric representation of the fraction by calculating the sum
