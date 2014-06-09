@@ -456,9 +456,36 @@ sub to_mixed {
     return $self->{num};
   } else {
     my $int = int($self->{num}/$self->{den});
-    return $int . "_" . abs($self->{num}) % $self->{den} . "/" . $self->{den} if $int;
+    return $int . "_" . abs($self->{num}) % $self->{den} . "/" . $self->{den}
+      if $int;
     return "$self->{num}/$self->{den}";
   }
+}
+
+
+=head2 to_unicode_string
+
+Returns a string representation of the fraction in the form
+"superscript numerator / subscript denominator".
+A Unicode 'FRACTION SLASH' is used instead of a normal slash.
+
+=cut
+
+sub to_unicode_string {
+  return _to_unicode(shift->to_string);
+}
+
+
+=head2 to_unicode_mixed
+
+Returns a string representation of the fraction in the form
+"integer superscript numerator / subscript denominator".
+A Unicode 'FRACTION SLASH' is used instead of a normal slash.
+
+=cut
+
+sub to_unicode_mixed {
+  return _to_unicode(shift->to_mixed);
 }
 
 
@@ -661,6 +688,32 @@ sub _sup_to_basic {
 sub _sub_to_basic {
   return ( $_[0] =~ tr/\N{U+2080}-\N{U+208E}/0-9+\-=()/r);
 }
+
+sub _basic_to_sup {
+  return ( $_[0] =~ tr/0-9+\-=()/\N{U+2070}\N{U+00B9}\N{U+00B2}\N{U+00B3}\N{U+2074}-\N{U+207E}/r);
+}
+
+sub _basic_to_sub {
+  return ( $_[0] =~ tr/0-9+\-=()/\N{U+2080}-\N{U+208E}/r);
+}
+
+sub _to_unicode {
+  if ($_[0] =~ m|^(?<sign>-?)(?<num>\d+)/(?<den>\d+)$|) {
+    my $num = _basic_to_sup($+{num});
+    my $den = _basic_to_sub($+{den});
+    return ($+{sign} ? "\N{U+207B}" : '') . $num . "\N{U+2044}" . $den;
+  }
+  if ($_[0] =~ m|^(?<sign>-?)(?<int>\d+)_(?<num>\d+)/(?<den>\d+)$|) {
+    my $num = _basic_to_sup($+{num});
+    my $den = _basic_to_sub($+{den});
+    return $+{sign} . $+{int} . $num . "\N{U+2044}" . $den;
+  }
+  if ($_[0] =~ m|^(?<sign>-?)(?<int>\d+)$|) {
+    return $+{sign} . $+{int}; # Darn, this is just what we got!
+  }
+  return;
+}
+
 
 __PACKAGE__->meta->make_immutable;
 
