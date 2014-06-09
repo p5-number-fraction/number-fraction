@@ -254,13 +254,16 @@ The denominator is set to 1.
 No arguments, in which case a numerator of 0 and a denominator of 1
 are used.
 
-=item Note
+=item *
+
+Note
 
 As of version 2.1 it no longer allows for an array of four or more integer.
 Before then, it would simply pass in the first two integers. Version 2.1 allows
-for three integers (when using C<:mixed>) and issues a warning when more then two
-parameters are passed.
-Starting with version 3, it will die as it is seen as an error to pass invalid input.
+for three integers (when using C<:mixed>) and issues a warning when more then
+two parameters are passed.
+Starting with version 3, it will die as it is seen as an error to pass invalid
+input.
 
 =back
 
