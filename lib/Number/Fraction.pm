@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 NAME
 
 Number::Fraction - Perl extension to model fractions
@@ -361,6 +363,7 @@ around BUILDARGS => sub {
       }
     }
 
+    # check for unicode mixed super/sub scripted strings
     if ($_[0] =~ m|
          ^
          (?<sign>-?)
@@ -378,7 +381,25 @@ around BUILDARGS => sub {
         }
       );
     }
-        
+     
+    # check for floating point
+    elsif ($_[0] =~ m|
+        ^
+        (?<sign>-?)
+        (?<int>[0-9]+)?
+        [.,] # yep, lets do bdecimal point or comma
+        (?<num>[0-9]+)
+        \z
+        |x ) {
+      my $num = $+{num};
+      my $den = 10 ** length($+{num});
+      return $class->$orig({
+        num => (defined $+{int} ? $+{int} : 0) * $den + $num,
+        den => ($+{sign} eq '-') ? $den * -1 : $den,
+        }
+      );
+    }
+    
     if ($_[0] =~ m|^(-?)([0-9]+)[_ ]([0-9]+)/([0-9]+)\z|) { # Allow for space ?
 #   if ($_[0] =~ m|^(-?)([0-9]+)_([0-9]+)/([0-9]+)\z|) { # Perl notation
         return $class->$orig({
