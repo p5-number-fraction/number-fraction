@@ -164,9 +164,9 @@ use overload
   '/'      => 'div',
   '**'     => 'exp',
   'abs'    => 'abs',
-  '<'      => 'frac_lt',
-  '>'      => 'frac_gt',
-  '<=>'    => 'frac_cmp',
+  '<'      => '_frac_lt',
+  '>'      => '_frac_gt',
+  '<=>'    => '_frac_cmp',
   fallback => 1;
 
 my %_const_handlers = (
@@ -712,83 +712,44 @@ sub abs {
   return (ref $self)->new(abs($self->{num}), abs($self->{den}));
 }
 
-# frac_lt does the 'right thing' instead of numifying the fraction, it does
+# _frac_lt does the 'right thing' instead of numifying the fraction, it does
 # what basic arithmetic dictates, make the denominators the same!
 #
 # one could forge fractions that would lead to bad floating points
 
-sub frac_lt {
-  my ($l, $r, $rev) = @_;
+sub _frac_lt {
+  my ($l, $r, $rev ) = @_;
+  my ($l_cnt, $r_cnt);
   if (UNIVERSAL::isa($r, ref $l)) {
-    unless ($rev) {
-      return (
-        ( $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0) )
-        <
-        ( $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0) )
-      );
-    } else {
-      return (
-        ( $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0) )
-        >=
-        ( $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0) )
-      );
-    }
+    $l_cnt = $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0);
+    $r_cnt = $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0);
   } else {
-    unless ($rev) {
-      return (
-        ( $l->{num} *          1          * ($l->{den} <=> 0) )
-        <
-        ( $r        * CORE::abs $l->{den} * ($r        <=> 0) )
-      );
-    } else {
-      return (
-        ( $l->{num} *          1          * ($l->{den} <=> 0) )
-        >=
-        ( $r        * CORE::abs $l->{den} * ($r        <=> 0) )
-      );
-    }
-  }
+    $l_cnt = $l->{num} *         1           * ($l->{den} <=> 0);
+    $r_cnt = $r        * CORE::abs $l->{den} * ($r        <=> 0);
+  };
+  return ( $l_cnt <  $r_cnt ) unless $rev;
+  return ( $l_cnt >= $r_cnt );
 }
 
-sub frac_gt {
-  my ($l, $r, $rev) = @_;
-  
+sub _frac_gt {
+  my ($l, $r, $rev ) = @_;
+  my ($l_cnt, $r_cnt);
   if (UNIVERSAL::isa($r, ref $l)) {
-    unless ($rev) {
-      return (
-        ( $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0) )
-        >
-        ( $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0) )
-      );
-    } else {
-      return (
-        ( $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0) )
-        <=
-        ( $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0) )
-      );
-    }
+    $l_cnt = $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0);
+    $r_cnt = $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0);
   } else {
-    unless ($rev) {
-      return (
-        ( $l->{num} *          1          * ($l->{den} <=> 0) )
-        >
-        ( $r        * CORE::abs $l->{den} * ($r        <=> 0) )
-      );
-    } else {
-      return (
-        ( $l->{num} *          1          * ($l->{den} <=> 0) )
-        <=
-        ( $r        * CORE::abs $l->{den} * ($r        <=> 0) )
-      );
-    }
-  }
+    $l_cnt = $l->{num} *         1           * ($l->{den} <=> 0);
+    $r_cnt = $r        * CORE::abs $l->{den} * ($r        <=> 0);
+  };
+  return ( $l_cnt >  $r_cnt ) unless $rev;
+  return ( $l_cnt <= $r_cnt );
 }
 
-sub frac_cmp {
-  return -1 if frac_lt(@_);
-  return +1 if frac_gt(@_);
+sub _frac_cmp {
+  return -1 if _frac_lt(@_);
+  return +1 if _frac_gt(@_);
   return  0;
-}
+} # _frac_cmp
 
 =head2 nearest
 
