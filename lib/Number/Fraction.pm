@@ -164,6 +164,9 @@ use overload
   '/'      => 'div',
   '**'     => 'exp',
   'abs'    => 'abs',
+  '<'      => 'frac_lt',
+  '>'      => 'frac_gt',
+  '<=>'    => 'frac_cmp',
   fallback => 1;
 
 my %_const_handlers = (
@@ -510,6 +513,27 @@ sub to_unicode_mixed {
 }
 
 
+=head2 to_halfs
+
+=head2 to_quarters
+
+=head2 to_eights
+
+=head2 to_thirds
+
+=head2 to_sixths
+
+=head2 to_fifths
+
+Returns a string representation as a mixed fraction, rounded to the nearest
+possible 'half', 'quarter' ... and so on.
+
+=head2 to_simple
+
+Returns a string representation as a mixed fraction, rounded to the nearest
+possible to any of the above mentioned standard fractions. NB ⅐, ⅑ or ⅒ are not
+being used.
+
 =head2 to_num
 
 Returns a numeric representation of the fraction by calculating the sum
@@ -686,6 +710,97 @@ sub abs {
   my $self = shift;
 
   return (ref $self)->new(abs($self->{num}), abs($self->{den}));
+}
+
+# frac_lt does the 'right thing' instead of numifying the fraction, it does
+# what basic arithmetic dictates, make the denominators the same!
+#
+# one could forge fractions that would lead to bad floating points
+
+sub frac_lt {
+  my ($l, $r, $rev) = @_;
+  if (UNIVERSAL::isa($r, ref $l)) {
+    unless ($rev) {
+      return (
+        ( $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0) )
+        <
+        ( $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0) )
+      );
+    } else {
+      return (
+        ( $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0) )
+        >=
+        ( $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0) )
+      );
+    }
+  } else {
+    unless ($rev) {
+      return (
+        ( $l->{num} *          1          * ($l->{den} <=> 0) )
+        <
+        ( $r        * CORE::abs $l->{den} * ($r        <=> 0) )
+      );
+    } else {
+      return (
+        ( $l->{num} *          1          * ($l->{den} <=> 0) )
+        >=
+        ( $r        * CORE::abs $l->{den} * ($r        <=> 0) )
+      );
+    }
+  }
+}
+
+sub frac_gt {
+  my ($l, $r, $rev) = @_;
+  
+  if (UNIVERSAL::isa($r, ref $l)) {
+    unless ($rev) {
+      return (
+        ( $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0) )
+        >
+        ( $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0) )
+      );
+    } else {
+      return (
+        ( $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0) )
+        <=
+        ( $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0) )
+      );
+    }
+  } else {
+    unless ($rev) {
+      return (
+        ( $l->{num} *          1          * ($l->{den} <=> 0) )
+        >
+        ( $r        * CORE::abs $l->{den} * ($r        <=> 0) )
+      );
+    } else {
+      return (
+        ( $l->{num} *          1          * ($l->{den} <=> 0) )
+        <=
+        ( $r        * CORE::abs $l->{den} * ($r        <=> 0) )
+      );
+    }
+  }
+}
+
+sub frac_cmp {
+  return -1 if frac_lt(@_);
+  return +1 if frac_gt(@_);
+  return  0;
+}
+
+=head2 nearest
+
+Takes a list of integers and creates a new Number::Fraction object nearest to
+a fraction with a deniminator from that list.
+
+=cut
+
+sub nearest {
+  my $self = shift;
+  my @denominators = @_;
+  die "Missing list of denominators" if not @denominators;
 }
 
 sub _hcf {
