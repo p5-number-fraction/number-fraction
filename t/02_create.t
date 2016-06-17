@@ -1,4 +1,4 @@
-use Test::More tests => 33;
+use Test::More;
 use Number::Fraction;
 
 my $f = eval {Number::Fraction->new('a', 'b') };
@@ -59,3 +59,5 @@ $f3 = Number::Fraction->new('2');
 cmp_ok(ref $f3, 'eq', 'Number::Fraction', 'One more digit');
 cmp_ok($f3, 'eq', '2', '... as a string');
 cmp_ok($f3, '==', 2, '... as a number');
+
+done_testing();
