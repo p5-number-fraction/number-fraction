@@ -712,6 +712,19 @@ sub abs {
   return (ref $self)->new(abs($self->{num}), abs($self->{den}));
 }
 
+sub fract {
+  my $self = shift;
+
+  my $num = ($self->{num} <=> 0) * (CORE::abs($self->{num}) % $self->{den});
+  return (ref $self)->new($num, $self->{den});
+}
+
+sub int {
+  my $self = shift;
+
+  return (ref $self)->new(CORE::int($self->{num}/$self->{den}), 1)
+}
+
 # _frac_lt does the 'right thing' instead of numifying the fraction, it does
 # what basic arithmetic dictates, make the denominators the same!
 #
