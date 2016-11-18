@@ -314,6 +314,24 @@ our @_vulgar_fractions = (
 # [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FOUR FIFTHS}\z|,    [4, 5]],
 #; # thank you Getty
 
+our %_vulgar_codepoints = (
+    '1/4'   => "\N{U+00BC}",
+    '1/2'   => "\N{U+00BD}",
+    '3/4'   => "\N{U+00BE}",
+    '1/3'   => "\N{U+2153}",
+    '2/3'   => "\N{U+2154}",
+    '1/5'   => "\N{U+2155}",
+    '2/5'   => "\N{U+2156}",
+    '3/5'   => "\N{U+2157}",
+    '4/5'   => "\N{U+2158}",
+    '1/6'   => "\N{U+2159}",
+    '5/6'   => "\N{U+215A}",
+    '1/8'   => "\N{U+215B}",
+    '3/8'   => "\N{U+215C}",
+    '5/8'   => "\N{U+215D}",
+    '7/8'   => "\N{U+215E}",
+);
+
 around BUILDARGS => sub {
   my $orig = shift;
   my $class = shift;
@@ -525,11 +543,53 @@ sub to_unicode_mixed {
 Returns a string representation as a mixed fraction, rounded to the nearest
 possible 'half', 'quarter' ... and so on.
 
+=cut
+
+sub to_halfs    { return shift->to_simple(2) }
+
+sub to_thirds   { return shift->to_simple(3) }
+
+sub to_quarters { return shift->to_simple(4) }
+
+sub to_fifths   { return shift->to_simple(5) }
+
+sub to_sixths   { return shift->to_simple(6) }
+
+sub to_eights   { return shift->to_simple(8) }
+
 =head2 to_simple
 
 Returns a string representation as a mixed fraction, rounded to the nearest
 possible to any of the above mentioned standard fractions. NB ⅐, ⅑ or ⅒ are not
 being used.
+
+Optionally, one can pass in a list of well-known denominators (2, 3, 4, 5, 6, 8)
+to choose wich fractions can be used.
+
+=cut
+
+sub to_simple {
+  my $self = shift;
+  my @denominators = @_;
+
+  @denominators = ( 2, 3, 4, 5, 6, 8) unless @denominators;
+
+  my $near = $self->nearest(@denominators);
+
+  return $near->{num} if $near->{den} == 1;
+  
+  my $sgn = $near->{num} * $near->{den} < 0 ? '-' : '';
+  my $abs = $near->abs;
+  my $key = $abs->fract->to_string;
+  my $frc = $_vulgar_codepoints{$key};
+  unless ( $frc ) {
+    carp "not a recognize unicode fraction symbol [$key]\n";
+    return $near->to_unicode_mixed
+  }
+  my $int = int($abs->{num} / $abs->{den}) || '';
+
+  return $sgn . $int . $frc
+}
 
 =head2 to_num
 
