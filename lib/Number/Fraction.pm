@@ -24,6 +24,35 @@ or
   my $half = $one - $f1;
   print $half; # prints '1/2'
 
+or some famous examples from Ovid or the perldoc
+
+  use Number::Fraction ':constants';
+  
+  print '0.1' + '0.2' - '0.3';
+  # except for perl6, this is the usual suspect 5.55111512312578e-17
+  # times the mass of the sun, this would be the size of Mount Everest
+  # just a small rounding difference
+  
+  my $f1 = Number::Fraction->new(-6.725);
+  my $f2 = Number::Fraction->new( 0.025);
+  print int $f1/$f2;
+  # the correct -269, no internal  -268.99999999999994315658
+
+and as of the lates release with unicode support
+
+  my $f1 = Number::Fraction->new('3½');
+  my $f2 = Number::Fraction->new(4.33);
+  
+  my $f0 = $f1 * $f2;
+  
+  print $f0->to_simple; # 15⅙
+
+and for those who love pie
+
+  print '3.14159265359'->nearest(1 ..   10)->to_unicode_mixed  # 3¹⁄₇
+  
+  print '3.14159265359'->nearest(1 .. 1000)->to_unicode_string # ³⁵⁵⁄₁₁₃
+
 =head1 ABSTRACT
 
 Number::Fraction is a Perl module which allows you to work with fractions
