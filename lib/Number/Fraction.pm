@@ -458,11 +458,8 @@ Returns a string representation of the fraction in the form
 sub to_string {
   my $self = shift;
 
-  if ($self->{den} == 1) {
-    return $self->{num};
-  } else {
-    return "$self->{num}/$self->{den}";
-  }
+  return $self->{num} if $self->{den} == 1;
+  return $self->{num} . '/' . $self->{den};
 }
 
 
@@ -476,14 +473,14 @@ Returns a string representation of the fraction in the form
 sub to_mixed {
   my $self = shift;
 
-  if ($self->{den} == 1) {
-    return $self->{num};
-  } else {
-    my $int = int($self->{num}/$self->{den});
-    return $int . "_" . abs($self->{num}) % $self->{den} . "/" . $self->{den}
-      if $int;
-    return "$self->{num}/$self->{den}";
-  }
+  return $self->{num} if $self->{den} == 1;
+  
+  my $sgn = $self->{num} * $self->{den} < 0 ? '-' : '';
+  my $abs = $self->abs;
+  my $int = int($abs->{num} / $abs->{den});
+  $int = $int ? $int . '_' : '';
+
+  return $sgn . $int . $abs->fract->to_string
 }
 
 
