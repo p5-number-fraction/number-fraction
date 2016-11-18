@@ -772,6 +772,14 @@ sub nearest {
   my $self = shift;
   my @denominators = @_;
   die "Missing list of denominators" if not @denominators;
+  my @fractions = 
+    sort {
+      &abs ( $self->subtract($a) ) <=> &abs ( $self->subtract($b) )
+    }
+    map {
+      (ref $self)->new( sprintf("%.0f", $self->mult($_) ), $_ )
+    } @denominators;
+  return $fractions[0];
 }
 
 sub _hcf {
