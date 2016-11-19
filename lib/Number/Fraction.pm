@@ -861,14 +861,20 @@ sub nearest {
   my $self = shift;
   my @denominators = @_;
   die "Missing list of denominators" if not @denominators;
-  my @fractions = 
-    sort {
-      &abs ( $self->subtract($a) ) <=> &abs ( $self->subtract($b) )
+
+  my $frc = (ref $self)->new(0);
+  foreach my $den ( @denominators ) {
+    my $num = sprintf( "%.0f", $self->mult($den) );
+    if ( (
+      CORE::abs( $self->{num}*$frc->{den} - $frc->{num}*$self->{den} ) * $den
+      -
+      CORE::abs( $self->{num}*$den - $num*$self->{den} ) * $frc->{den}
+      ) > 0 ) {
+        $frc->{num} = $num;
+        $frc->{den} = $den;
+      }
     }
-    map {
-      (ref $self)->new( sprintf("%.0f", $self->mult($_) ), $_ )
-    } @denominators;
-  return $fractions[0];
+  return $frc;
 }
 
 sub _hcf {
