@@ -859,9 +859,9 @@ a fraction with a deniminator from that list.
 
 sub nearest {
   my $self = shift;
-    return $self if $self->{den} == 1;
+  return $self if $self->{den} ==1;
   my @denominators = @_;
-    die "Missing list of denominators" if not @denominators;
+  die "Missing list of denominators" if not @denominators;
 
   my $frc = (ref $self)->new;
   foreach my $den ( @denominators ) {
@@ -870,7 +870,7 @@ sub nearest {
       CORE::abs( $self->{num}*$frc->{den} - $frc->{num}*$self->{den} ) * $den
       -
       CORE::abs( $self->{num}*$den - $num*$self->{den} ) * $frc->{den}
-      ) >= 0 ) {
+      ) > 0 ) {
         $frc->{num} = $num;
         $frc->{den} = $den;
       }
