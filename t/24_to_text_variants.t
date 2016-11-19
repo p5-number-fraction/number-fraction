@@ -8,6 +8,8 @@ my $f = undef;
 no Number::Fraction; # Make sure we do not parse constants in 'eq' tests
 
 # to_mixed
+{
+local $Number::Fraction::MIXED_SEP = "_";
 
 cmp_ok (Number::Fraction->new(7, 3)->to_mixed,
   'eq', '2_1/3',    "mixed from two integers");
@@ -24,6 +26,7 @@ cmp_ok (Number::Fraction->new('8/4')->to_mixed,
 cmp_ok (Number::Fraction->new('0/1')->to_mixed,
   'eq', '0',        "mixed zero, uhm");
 
+}
 # to_unicode_string
 
 cmp_ok (Number::Fraction->new(7, 3)->to_unicode_string,

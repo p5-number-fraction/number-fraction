@@ -184,6 +184,8 @@ our $VERSION = '2.01';
 
 our $_mixed = 0;
 
+our $MIXED_SEP = "\N{U+00A0}"; # NO-BREAK SPACE
+
 use overload
   q("")    => 'to_string',
   '0+'     => 'to_num',
@@ -420,8 +422,7 @@ around BUILDARGS => sub {
       );
     }
     
-    if ($_[0] =~ m|^(-?)([0-9]+)[_ ]([0-9]+)/([0-9]+)\z|) { # Allow for space ?
-#   if ($_[0] =~ m|^(-?)([0-9]+)_([0-9]+)/([0-9]+)\z|) { # Perl notation
+    if ($_[0] =~ m|^(-?)([0-9]+)[_ \N{U+00A0}]([0-9]+)/([0-9]+)\z|) {
         return $class->$orig({
           num => $2 * $4 + $3,
           den=> ($1 eq '-') ? $4 * -1 : $4}
@@ -495,7 +496,7 @@ sub to_mixed {
   my $sgn = $self->{num} * $self->{den} < 0 ? '-' : '';
   my $abs = $self->abs;
   my $int = int($abs->{num} / $abs->{den});
-  $int = $int ? $int . '_' : '';
+  $int = $int ? $int . $MIXED_SEP : '';
 
   return $sgn . $int . $abs->fract->to_string
 }
@@ -887,7 +888,7 @@ sub _to_unicode {
     my $den = _basic_to_sub($+{den});
     return ($+{sign} ? "\N{U+207B}" : '') . $num . "\N{U+2044}" . $den;
   }
-  if ($_[0] =~ m|^(?<sign>-?)(?<int>\d+)_(?<num>\d+)/(?<den>\d+)$|) {
+  if ($_[0] =~ m|^(?<sign>-?)(?<int>\d+)$MIXED_SEP(?<num>\d+)/(?<den>\d+)$|) {
     my $num = _basic_to_sup($+{num});
     my $den = _basic_to_sub($+{den});
     return $+{sign} . $+{int} . $num . "\N{U+2044}" . $den;
