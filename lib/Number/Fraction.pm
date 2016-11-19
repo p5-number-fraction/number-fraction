@@ -323,26 +323,6 @@ our @_vulgar_fractions = (
   {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+215E}\z|, num=>7, den=>8},
 );
 
-# use charnames ':full';
-#
-#our @_vulgar_fractions = (
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE HALF}\z|,       [1, 2]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE QUARTER}\z|,    [1, 4]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE QUARTERS}\z|, [3, 4]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE EIGHTH}\z|,     [1, 8]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE EIGHTHS}\z|,  [3, 8]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FIVE EIGHTHS}\z|,   [5, 8]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION SEVEN EIGHTHS}\z|,  [7, 8]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE THIRD}\z|,      [1, 3]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION TWO THIRDS}\z|,     [2, 3]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE SIXTH}\z|,      [1, 6]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FIVE SIXTHS}\z|,    [5, 6]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION ONE FIFTH}\z|,      [1, 5]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION TWO FIFTHS}\z|,     [2, 5]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION THREE FIFTHS}\z|,   [3, 5]],
-# [qr|^(-?)([0-9]+)?\N{VULGAR FRACTION FOUR FIFTHS}\z|,    [4, 5]],
-#; # thank you Getty
-
 our %_vulgar_codepoints = (
     '1/4'   => "\N{U+00BC}",
     '1/2'   => "\N{U+00BD}",
@@ -392,16 +372,6 @@ around BUILDARGS => sub {
         die "Can't make a $class from a ", ref $_[0];
       }
     }
-    
-#   for (@_vulgar_fractions) {
-#     if ($_[0] =~ m/$_->[0]/ ) {
-#       return $class->$orig({
-#           num => (defined $2 ? $2 : 0) * $_->[1]->[1] + $_->[1]->[0],
-#           den => ($1 eq '-') ? $_->[1]->[1] * -1 : $_->[1]->[1],
-#           }
-#       );
-#     }
-#   }
     
     for (@_vulgar_fractions) { # provides $_->{num} and $_->{den}
       if ($_[0] =~ m/$_->{regexp}/ ) {
