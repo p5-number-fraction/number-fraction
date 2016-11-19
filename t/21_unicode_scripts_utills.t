@@ -18,6 +18,8 @@ cmp_ok (Number::Fraction::_basic_to_sub('0123456789+-=()'),
   'eq', "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎", "Translate to subscript");
 
 no Number::Fraction; # prevent contstants to be parsed
+{
+local $Number::Fraction::MIXED_SEP = "_";
 
 cmp_ok (Number::Fraction::_to_unicode('5/6'),
   'eq', '⁵⁄₆', "Unicode 5/6");
@@ -33,4 +35,5 @@ cmp_ok (Number::Fraction::_to_unicode('-2_7/8'),
 
 cmp_ok (Number::Fraction::_to_unicode('-1'),
   'eq', '-1', "Unicode -1, just a negative integer");
+}
 
