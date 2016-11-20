@@ -13,4 +13,4 @@ ok($@);
 $f = eval {Number::Fraction->new("6\n\n") };
 ok($@);
 
-done_testing();
+done_testing;
