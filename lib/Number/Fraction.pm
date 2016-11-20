@@ -366,6 +366,7 @@ around BUILDARGS => sub {
     die "numerator and denominator both need to be integers"
       unless $_[0] =~ /^-?[0-9]+\z/ and $_[1] =~ /^-?[0-9]+\z/;
     return $class->$orig({ num => $_[0], den => $_[1] });
+    # fix: regex string representation and the real number can be different
   } elsif (@_ == 1) {
     if (ref $_[0]) {
       if (UNIVERSAL::isa($_[0], $class)) {
