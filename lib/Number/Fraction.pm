@@ -742,7 +742,11 @@ is a real number.
 sub exp {
   my ($l, $r, $rev) = @_;
 
-  if ($rev) {
+  if ($rev) { # original left (non fraction) and right have been reversed
+    my $f = eval {
+      (ref $l)->new($r)
+    };
+    return $f ** $l unless $!;
     return $r ** $l->to_num;
   }  
 
@@ -750,11 +754,23 @@ sub exp {
     if ($r->{den} == 1) {
       return $l ** $r->to_num;
     } else {
+      my $f = eval {
+        # this is cheating
+        (ref $l)->new( $l->{num} ** $r->to_num, $l->{den} ** $r->to_num )
+        # the correct way is to factorise $l->{num} and $l->{den}
+        # and count the repeats of each prime factor
+        # and that those are a multiple of the $r->{den}
+      };
+      return $f unless $!;
       return $l->to_num ** $r->to_num;
     }
   } elsif ($r =~ /^[-+]?\d+$/) {
     return (ref $l)->new($l->{num} ** $r, $l->{den} ** $r);
   } else {
+    my $f = eval {
+      (ref $l)->new( $l->{num} ** $r, $l->{den} ** $r )
+    };
+    return $f unless $!;
     croak "Can't raise $l to the power $r\n";
   }
 }
