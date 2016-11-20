@@ -141,22 +141,28 @@ be negative, prepending it with a minus-sign.
 =head2 Experimental Support for Exponentiation
 
 Version 1.13 of Number::Fraction adds experimental support for exponentiation
-operations. If a Number::Fraction object is used as the left hand operand of
-an exponentiation expression then the value returned will be another
-Number::Fraction object - if that makes sense. In all other cases, the
-expression returns a real number.
+operations. Version 3 has extended support and returns a Number::Fraction
 
-Currently this only works if the right hand operand is an integer (or
-a Number::Fraction object that has a denominator of 1). Later I hope to
-extend this so support so that a Number::Fraction object is returned
-whenever the result of the expression is a rational number.
+It does a lot of cheating, but can give very useful results. And for now will
+try to make a real number into a Number::Fraction if that real does not have a
+power of ten component (like 1.234e45, thes numbers will simply fail). Such that
+
+  ('5⅞' ** '1¼') ** '⅘'
+
+will produce stil the right fraction!
+
+In a future version, I might use automatic rounding to a optional accuracy, so
+that it also works for less forged examples as the above. One could still use
+C<nearest> to find the nearest fraction to the result of the previous
+computation.
 
 For example:
 
   '1/2' ** 2 #   Returns a Number::Fraction ('1/4')
   '2/1' ** '2/1' Returns a Number::Fraction ('4/1')
   '2/1' ** '1/2' Returns a real number (1.414213)
-   0.5  ** '2/1' Returns a real number (0.25)
+   0.5  ** '2/1' Returns a Number::Fraction ('1/4')
+   0.25 ** '1/2' Returns a Number::Fraction ('1/2')
 
 =head2 Version 2: Now With Added Moose
 
@@ -732,47 +738,34 @@ sub div {
 Raise a Number::Fraction object to a power.
 
 The first argument is a number fraction object. The second argument is
-another Number::Fraction object or a number. If the second argument is
-an integer or a Number::Fraction object containing an integer then the
-value returned is a Number::Fraction object, otherwise the value returned
-is a real number.
+another Number::Fraction object or a number. It will try to compute another new
+Number::Fraction object. This may fail if either numerator or denominator of the
+new one are getting too big. In such case the value returned is a real number.
 
 =cut
 
 sub exp {
   my ($l, $r, $rev) = @_;
 
-  if ($rev) { # original left (non fraction) and right have been reversed
+  if ($rev) {
     my $f = eval {
       (ref $l)->new($r)
     };
-    return $f ** $l unless $!;
+    return $f ** $l unless $@;
     return $r ** $l->to_num;
   }  
 
-  if (UNIVERSAL::isa($r, ref $l)) {
-    if ($r->{den} == 1) {
-      return $l ** $r->to_num;
-    } else {
-      my $f = eval {
-        # this is cheating
-        (ref $l)->new( $l->{num} ** $r->to_num, $l->{den} ** $r->to_num )
-        # the correct way is to factorise $l->{num} and $l->{den}
-        # and count the repeats of each prime factor
-        # and that those are a multiple of the $r->{den}
-      };
-      return $f unless $!;
-      return $l->to_num ** $r->to_num;
-    }
-  } elsif ($r =~ /^[-+]?\d+$/) {
-    return (ref $l)->new($l->{num} ** $r, $l->{den} ** $r);
-  } else {
-    my $f = eval {
-      (ref $l)->new( $l->{num} ** $r, $l->{den} ** $r )
-    };
-    return $f unless $!;
-    croak "Can't raise $l to the power $r\n";
-  }
+  my $expn = UNIVERSAL::isa($r, ref $l) ? $r->to_num : $r;
+  my $pure = eval {
+    # this is cheating, works when numerator and denominator look like integers
+    (ref $l)->new( $l->{num} ** $expn, $l->{den} ** $expn )
+  };
+  return $pure unless $@;
+  my $real = eval { $l->to_num ** $expn }; # real errors, like $expn is NaN
+  croak "Can't raise $l to the power $r\n" if $@;
+  my $fake = eval { (ref $l)->new($real) }; # overflow from int to float
+  return $fake unless $@;
+  return $real;
 }
 
 =head2 abs
