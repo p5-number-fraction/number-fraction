@@ -1,4 +1,4 @@
-use Test::More tests => 28;
+use Test::More;
 use Number::Fraction ':constants';
 
 use utf8;
@@ -78,4 +78,4 @@ cmp_ok (Number::Fraction->new('8/4')->to_simple,
 cmp_ok (Number::Fraction->new('0/1')->to_simple,
   'eq', '0',        "simple mixed zero, uhm");
 
-
+done_testing();

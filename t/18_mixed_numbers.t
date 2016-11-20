@@ -1,4 +1,4 @@
-use Test::More 'no_plan';
+use Test::More;
 use Number::Fraction ':mixed';
 
 eval "use Test::Warn";
@@ -34,3 +34,5 @@ ok($frac != 3.80, # 3 + 4/5
 warning_like { Number::Fraction->new( 3 .. 6 ) } 
   {carped => '/too many arguments/'},
   "Warning omited: 'too many arguments will raise an exception'";
+
+done_testing();

@@ -1,4 +1,4 @@
-use Test::More tests => 15;
+use Test::More;
 use Number::Fraction ':constants';
 
 use utf8;
@@ -49,3 +49,5 @@ cmp_ok ($f, '==', 3 / 5, "VULGAR FRACTION THREE FIFTHS");
 
 $f = '⅘';
 cmp_ok ($f, '==', 4 / 5, "VULGAR FRACTION FOUR FIFTHS");
+
+done_testing();

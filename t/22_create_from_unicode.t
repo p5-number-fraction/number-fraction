@@ -1,4 +1,4 @@
-use Test::More tests => 5;
+use Test::More;
 use Number::Fraction ':constants';
 
 use utf8;
@@ -21,3 +21,4 @@ cmp_ok ($f, '==', -0.35, "two three-twentieths negative");
 $f = '⁻⁷⁄₂₀';
 cmp_ok ($f, '==', -0.35, "two three-twentieths negative superscript");
 
+done_testing();

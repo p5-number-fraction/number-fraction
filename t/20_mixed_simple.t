@@ -1,4 +1,4 @@
-use Test::More 'no_plan';
+use Test::More;
 use Number::Fraction ':constants';
 
 use utf8;
@@ -42,3 +42,4 @@ cmp_ok ($f, '==', -2.50, "minus two and a half");
 $f = '-½';
 cmp_ok ($f, '==', -0.50, "just minus a half");
 
+done_testing();

@@ -856,8 +856,8 @@ sub nearest {
       ) > 0 ) {
         $frc->{num} = $num;
         $frc->{den} = $den;
-      }
     }
+  }
   return $frc;
 }
 

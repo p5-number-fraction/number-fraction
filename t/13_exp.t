@@ -1,4 +1,4 @@
-use Test::More tests => 8;
+use Test::More;
 use Number::Fraction ':constants';
 use utf8;
 
@@ -14,3 +14,5 @@ is($f ** $f3, '1/4', 'Raising a Number::Fraction to a Number::Fraction that is r
 is($f2 ** 0.5, '1/4', 'Raising a Number::Fraction to a float');
 is('27/8' ** '2/3', '9/4', 'Raising a Number::Fraction to an interesting Number::Fraction');
 is(0.25 ** '½', '1/2', 'Raising a nice decimal to a Number::Fraction');
+
+done_testing();

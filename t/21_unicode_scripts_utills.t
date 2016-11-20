@@ -1,4 +1,4 @@
-use Test::More tests => 9;
+use Test::More;
 use Number::Fraction ':constants';
 
 use utf8;
@@ -37,3 +37,4 @@ cmp_ok (Number::Fraction::_to_unicode('-1'),
   'eq', '-1', "Unicode -1, just a negative integer");
 }
 
+done_testing();

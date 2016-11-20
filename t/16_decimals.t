@@ -1,4 +1,4 @@
-use Test::More 'no_plan';
+use Test::More;
 use Number::Fraction ':constants';
 
 my $fract = undef;
@@ -25,3 +25,4 @@ ok($@, "Numerator can't be a decimal");
 $fract = eval {Number::Fraction->new(3 , 4.5) };
 ok($@, "Denominator can't be a decimal");
 
+done_testing();
