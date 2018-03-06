@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 use Number::Fraction ':constants';
 use utf8;
 
