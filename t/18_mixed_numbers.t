@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 use Test::More;
 use Number::Fraction ':mixed';
 
@@ -31,7 +33,7 @@ ok($frac3 == $fract, "adding two farctions created from 3 arguments");
 $frac = eval { Number::Fraction->new( 3 .. 6 ) };
 ok($frac != 3.80, # 3 + 4/5
     "new( 3 .. 6) != 3.80 -- this will never be evaluated, it's bad");
-warning_like { Number::Fraction->new( 3 .. 6 ) } 
+warning_like { Number::Fraction->new( 3 .. 6 ) }
   {carped => '/too many arguments/'},
   "Warning omited: 'too many arguments will raise an exception'";
 

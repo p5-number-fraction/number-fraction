@@ -27,12 +27,12 @@ or
 or some famous examples from Ovid or the perldoc
 
   use Number::Fraction ':constants';
-  
+
   print '0.1' + '0.2' - '0.3';
   # except for perl6, this is the usual suspect 5.55111512312578e-17
   # times the mass of the sun, this would be the size of Mount Everest
   # just a small rounding difference
-  
+
   my $f1 = Number::Fraction->new(-6.725);
   my $f2 = Number::Fraction->new( 0.025);
   print int $f1/$f2;
@@ -42,15 +42,15 @@ and as of the lates release with unicode support
 
   my $f1 = Number::Fraction->new('3½');
   my $f2 = Number::Fraction->new(4.33);
-  
+
   my $f0 = $f1 * $f2;
-  
+
   print $f0->to_simple; # 15⅙
 
 and for those who love pie
 
   print '3.14159265359'->nearest(1 ..   10)->to_unicode_mixed  # 3¹⁄₇
-  
+
   print '3.14159265359'->nearest(1 .. 1000)->to_unicode_string # ³⁵⁵⁄₁₁₃
 
 =head1 ABSTRACT
@@ -63,7 +63,7 @@ in your Perl programs.
 Number::Fraction allows you to work with fractions (i.e. rational
 numbers) in your Perl programs in a very natural way.
 
-It was originally written as a demonstration of the techniques of 
+It was originally written as a demonstration of the techniques of
 overloading.
 
 If you use the module in your program in the usual way
@@ -99,7 +99,7 @@ If you use the alterative syntax of
   use Number::Fraction ':constants';
 
 then Number::Fraction will automatically create fraction objects from
-string constants in your program. Any time your program contains a 
+string constants in your program. Any time your program contains a
 string constant of the form C<\d+/\d+> then that will be automatically
 replaced with the equivalent fraction object. For example
 
@@ -124,7 +124,8 @@ create a fraction of '2/4', it will silently be converted to '1/2'.
 Since version 3.0 the interpretation of strings and constants has been
 enriched with a few features for mixed fractions and Unicode characters.
 
-Number::Fraction now recognises a more Perlish way of entering mixed fractions which consist of an integer-part and a fraction in the form of
+Number::Fraction now recognises a more Perlish way of entering mixed
+fractions which consist of an integer-part and a fraction in the form of
 C<\d+_\d+/\d+>. For example
 
   my $mixed = '2_3/4'; # two and three fourths, stored as 11/4
@@ -222,8 +223,9 @@ handler.
 =cut
 
 sub import {
-    $_mixed = 1 if ( grep { $_ eq ':mixed' } @_ );
-    overload::constant %_const_handlers if ( grep { $_ eq ':constants' } @_ );
+    my %args = map { $_ => 1 } @_;
+    $_mixed = 1 $args{':mixed'};
+    overload::constant %_const_handlers if $args{':constants'};
 }
 
 =head2 unimport
@@ -279,7 +281,7 @@ one needs to enable 'mixed' fractions:
   use Number::Fractions ':mixed';
 
 This will be the default behaviour in version 3.x;
-when not enabled in version 2.x it will omit a warning to revise your code. 
+when not enabled in version 2.x it will omit a warning to revise your code.
 
 =item *
 
@@ -311,7 +313,7 @@ input.
 
 Dies if a Number::Fraction object can't be created.
 
-=cut 
+=cut
 
 our @_vulgar_fractions = (
   {regexp=> qr|^(?<sign>-?)(?<int>[0-9]+)?\N{U+00BC}\z|, num=>1, den=>4},
@@ -364,7 +366,7 @@ around BUILDARGS => sub {
 
       return $class->$orig({ num => $_[0] * $_[2] + $_[1], den => $_[2] });
     }
-    else { 
+    else {
       carp "Revise your code: 3 arguments will become mixed-fraction feature!";
     }
   }
@@ -383,7 +385,7 @@ around BUILDARGS => sub {
         die "Can't make a $class from a ", ref $_[0];
       }
     }
-    
+
     for (@_vulgar_fractions) { # provides $_->{num} and $_->{den}
       if ($_[0] =~ m/$_->{regexp}/ ) {
         return $class->$orig({
@@ -412,7 +414,7 @@ around BUILDARGS => sub {
         }
       );
     }
-     
+
     # check for floating point
     elsif ($_[0] =~ m|
         ^
@@ -430,7 +432,7 @@ around BUILDARGS => sub {
         }
       );
     }
-    
+
     if ($_[0] =~ m|^(-?)([0-9]+)[_ \N{U+00A0}]([0-9]+)/([0-9]+)\z|) {
         return $class->$orig({
           num => $2 * $4 + $3,
@@ -501,13 +503,13 @@ sub to_mixed {
   my $self = shift;
 
   return $self->{num} if $self->{den} == 1;
-  
+
   my $sgn = $self->{num} * $self->{den} < 0 ? '-' : '';
   my $abs = $self->abs;
   my $int = int($abs->{num} / $abs->{den});
   $int = $int ? $int . $MIXED_SEP : '';
 
-  return $sgn . $int . $abs->fract->to_string
+  return $sgn . $int . $abs->fract->to_string;
 }
 
 
@@ -586,18 +588,18 @@ sub to_simple {
   my $near = $self->nearest(@denominators);
 
   return $near->{num} if $near->{den} == 1;
-  
+
   my $sgn = $near->{num} * $near->{den} < 0 ? '-' : '';
   my $abs = $near->abs;
   my $key = $abs->fract->to_string;
   my $frc = $_vulgar_codepoints{$key};
   unless ( $frc ) {
     carp "not a recognize unicode fraction symbol [$key]\n";
-    return $near->to_unicode_mixed
+    return $near->to_unicode_mixed;
   }
   my $int = int($abs->{num} / $abs->{den}) || '';
 
-  return $sgn . $int . $frc
+  return $sgn . $int . $frc;
 }
 
 =head2 to_num
@@ -753,7 +755,7 @@ sub exp {
     };
     return $f ** $l unless $@;
     return $r ** $l->to_num;
-  }  
+  }
 
   my $expn = UNIVERSAL::isa($r, ref $l) ? $r->to_num : $r;
   my $pure = eval {
@@ -791,7 +793,7 @@ sub fract {
 sub int {
   my $self = shift;
 
-  return (ref $self)->new(CORE::int($self->{num}/$self->{den}), 1)
+  return (ref $self)->new(CORE::int($self->{num}/$self->{den}), 1);
 }
 
 # _frac_lt does the 'right thing' instead of numifying the fraction, it does
@@ -808,7 +810,7 @@ sub _frac_lt {
   } else {
     $l_cnt = $l->{num} *         1           * ($l->{den} <=> 0);
     $r_cnt = $r        * CORE::abs $l->{den} * ($r        <=> 0);
-  };
+  }
   return ( $l_cnt <  $r_cnt ) unless $rev;
   return ( $l_cnt >= $r_cnt );
 }
@@ -822,7 +824,7 @@ sub _frac_gt {
   } else {
     $l_cnt = $l->{num} *         1           * ($l->{den} <=> 0);
     $r_cnt = $r        * CORE::abs $l->{den} * ($r        <=> 0);
-  };
+  }
   return ( $l_cnt >  $r_cnt ) unless $rev;
   return ( $l_cnt <= $r_cnt );
 }
