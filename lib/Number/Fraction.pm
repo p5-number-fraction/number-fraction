@@ -33,7 +33,7 @@ in your Perl programs.
 Number::Fraction allows you to work with fractions (i.e. rational
 numbers) in your Perl programs in a very natural way.
 
-It was originally written as a demonstration of the techniques of 
+It was originally written as a demonstration of the techniques of
 overloading.
 
 If you use the module in your program in the usual way
@@ -64,7 +64,7 @@ If you use the alterative syntax of
   use Number::Fraction ':constants';
 
 then Number::Fraction will automatically create fraction objects from
-string constants in your program. Any time your program contains a 
+string constants in your program. Any time your program contains a
 string constant of the form C<\d+/\d+> then that will be automatically
 replaced with the equivalent fraction object. For example
 
@@ -214,7 +214,7 @@ are used.
 
 Dies if a Number::Fraction object can't be created.
 
-=cut 
+=cut
 
 around BUILDARGS => sub {
   my $orig = shift;
@@ -435,7 +435,7 @@ sub exp {
 
   if ($rev) {
     return $r ** $l->to_num;
-  }  
+  }
 
   if (UNIVERSAL::isa($r, ref $l)) {
     if ($r->{den} == 1) {
