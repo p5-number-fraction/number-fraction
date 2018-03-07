@@ -224,7 +224,7 @@ handler.
 
 sub import {
     my %args = map { $_ => 1 } @_;
-    $_mixed = 1 $args{':mixed'};
+    $_mixed = 1 if $args{':mixed'};
     overload::constant %_const_handlers if $args{':constants'};
 }
 
@@ -939,4 +939,3 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
