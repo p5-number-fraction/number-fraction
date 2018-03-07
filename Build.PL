@@ -15,7 +15,7 @@ my $build = Module::Build->new(
     'Test::Pod'           => 0,
     'Test::Pod::Coverage' => 0,
   },
-  create_makefile_pl => 'traditional'
+  create_makefile_pl => 'traditional',
   meta_merge => {
     'meta-spec' => { version => 2 },
     resources  => {
