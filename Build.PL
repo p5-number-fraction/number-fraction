@@ -16,6 +16,17 @@ my $build = Module::Build->new(
     'Test::Pod::Coverage' => 0,
   },
   create_makefile_pl => 'traditional'
+  meta_merge => {
+    'meta-spec' => { version => 2 },
+    resources  => {
+      repository => {
+        type => 'git',
+        url  => 'https://github.com/p5-number-fraction/number-fraction.git',
+        web  => 'https://github.com/p5-number-fraction/number-fraction',
+      },
+    },
+  },
+
 );
 
 $build->create_build_script;
