@@ -1,3 +1,6 @@
+use strict;
+use warnings;
+
 use Test::More tests => 48;
 use Number::Fraction ':constants';
 
