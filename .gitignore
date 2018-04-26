@@ -1,0 +1,7 @@
+Build
+META.*
+MYMETA.*
+Number-Fraction-*.tar.gz
+Number-Fraction-*/
+_build/
+blib/
