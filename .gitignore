@@ -1,11 +1,10 @@
 Number-Fraction-*.tar.gz
 Number-Fraction/
+Number-Fraction-*/
 Build
 Changes
-META.json
-META.yml
-MYMETA.json
-MYMETA.yml
+META.*
+MYMETA.*
 Makefile.PL
 _build/
 blib/

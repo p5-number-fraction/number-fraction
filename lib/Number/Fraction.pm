@@ -757,6 +757,18 @@ sub exp {
     return $r ** $l->to_num;
   }
 
+  if (UNIVERSAL::isa($r, ref $l)) {
+    if ($r->{den} == 1) {
+      return $l ** $r->to_num;
+    } else {
+      return $l->to_num ** $r->to_num;
+    }
+  } elsif ($r =~ /^[-+]?\d+$/) {
+    return (ref $l)->new($l->{num} ** $r, $l->{den} ** $r);
+  } else {
+    croak "Can't raise $l to the power $r\n";
+  }
+
   my $expn = UNIVERSAL::isa($r, ref $l) ? $r->to_num : $r;
   my $pure = eval {
     # this is cheating, works when numerator and denominator look like integers
@@ -914,6 +926,7 @@ sub _to_unicode {
 }
 
 
+no Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;

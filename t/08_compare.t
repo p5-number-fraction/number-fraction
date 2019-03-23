@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
+use Test::More tests => 48;
 use Number::Fraction ':constants';
 
 my $f = '1/2';
