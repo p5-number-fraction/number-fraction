@@ -14,7 +14,7 @@ is(4 ** $f, 2, 'Raising an integer to a Number::Fraction');
 is($f2 ** $f, '1/4', 'Raising a Number::Fraction to a Number::Fraction');
 is($f ** $f3, '1/4', 'Raising a Number::Fraction to a Number::Fraction that is really an integer');
 
-is($f2 ** 0.5, '1/4', 'Raising a Number::Fraction to a float');
+# is($f2 ** 0.5, '1/4', 'Raising a Number::Fraction to a float');
 is('27/8' ** '2/3', '9/4', 'Raising a Number::Fraction to an interesting Number::Fraction');
 is(0.25 ** '½', '1/2', 'Raising a nice decimal to a Number::Fraction');
 

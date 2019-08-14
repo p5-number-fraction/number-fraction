@@ -795,12 +795,27 @@ sub abs {
   return (ref $self)->new(abs($self->{num}), abs($self->{den}));
 }
 
+=head2 fract
+
+Returns the fraction part of a Number::Fraction object as a new
+Number::Fraction object.
+
+=cut
+
 sub fract {
   my $self = shift;
 
   my $num = ($self->{num} <=> 0) * (CORE::abs($self->{num}) % $self->{den});
   return (ref $self)->new($num, $self->{den});
 }
+
+
+=head2 int
+
+Returns the integer part of a Number::Fraction object as a new
+Number::Fraction object.
+
+=cut
 
 sub int {
   my $self = shift;
