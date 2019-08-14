@@ -189,9 +189,9 @@ use Moose;
 
 our $VERSION = '2.01';
 
-our $_mixed = 0;
+my $_mixed = 0;
 
-our $MIXED_SEP = "\N{U+00A0}"; # NO-BREAK SPACE
+my $MIXED_SEP = "\N{U+00A0}"; # NO-BREAK SPACE
 
 use overload
   q("")    => 'to_string',
@@ -224,7 +224,7 @@ handler.
 
 sub import {
     my %args = map { $_ => 1 } @_;
-    $_mixed = 1 $args{':mixed'};
+    $_mixed = exists $args{':mixed'};
     overload::constant %_const_handlers if $args{':constants'};
 }
 
