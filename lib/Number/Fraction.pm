@@ -191,7 +191,7 @@ our $VERSION = '2.01';
 
 my $_mixed = 0;
 
-my $MIXED_SEP = "\N{U+00A0}"; # NO-BREAK SPACE
+our $MIXED_SEP = "\N{U+00A0}"; # NO-BREAK SPACE
 
 use overload
   q("")    => 'to_string',
