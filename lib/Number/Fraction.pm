@@ -1,3 +1,5 @@
+use compat::perl7;
+
 =encoding utf8
 
 =head1 NAME
