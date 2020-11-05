@@ -14,6 +14,7 @@ my $build = Module::Build->new(
   build_recommends => {
     'Test::Pod'           => 0,
     'Test::Pod::Coverage' => 0,
+    'Test::Warn'          => 0,
   },
   create_makefile_pl => 'traditional',
   meta_merge => {
