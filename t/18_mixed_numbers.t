@@ -6,8 +6,6 @@ use Number::Fraction ':mixed';
 eval "use Test::Warn";
 plan skip_all => "'Test::Warn' required for testing 3 arguments options" if $@;
 
-use Test::Warn;
-
 # checking on $@ is useless to see if warnings are omitted
 # warnings are not counted as errors, thus eval exits with '0'
 
