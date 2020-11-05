@@ -6,9 +6,6 @@ use Number::Fraction;
 eval "use Test::Warn";
 plan skip_all => "'Test::Warn' required for testing 3 arguments options" if $@;
 
-# checking on $@ is useless to see if warnings are omitted
-# warnings are not counted as errors, thus eval exits with '0'
-
 my $frac = undef;
 
 # warnings will be omitted for several months
