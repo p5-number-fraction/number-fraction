@@ -25,6 +25,9 @@ my $build = Module::Build->new(
         url  => 'https://github.com/p5-number-fraction/number-fraction.git',
         web  => 'https://github.com/p5-number-fraction/number-fraction',
       },
+      bugtracker => {
+        web  => 'https://github.com/p5-number-fraction/number-fraction/issues',
+      },
     },
   },
 

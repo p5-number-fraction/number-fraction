@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
+use Test::Warn;
 use Number::Fraction ':mixed';
 
 eval "use Test::Warn";

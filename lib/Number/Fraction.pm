@@ -185,9 +185,10 @@ use strict;
 use warnings;
 
 use Carp;
-use Moose;
+use Moo;
+use MooX::Types::MooseLike::Base qw/Int/;
 
-our $VERSION = '2.01';
+our $VERSION = '2.1.0';
 
 my $_mixed = 0;
 
@@ -242,12 +243,12 @@ sub unimport {
 
 has num => (
   is  => 'rw',
-  isa => 'Int',
+  isa => Int,
 );
 
 has den => (
   is  => 'rw',
-  isa => 'Int',
+  isa => Int,
 );
 
 =head2 BUILDARGS

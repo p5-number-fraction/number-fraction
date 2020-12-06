@@ -1,3 +1,8 @@
+2020-12-06  Dave Cross <dave@perlhacks.com>
+
+        * Switch to Moo instead of Moose
+        * Added details of the bug tracker
+
 2018-03-07  Dave Cross <dave@dave.org.uk>
 
 	* Build.PL: Fix typo in Build.PL
