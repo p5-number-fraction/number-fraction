@@ -964,6 +964,8 @@ None by default.
 
 perldoc overload
 
+L<Lingua::EN::Fractions>
+
 =head1 AUTHOR
 
 Dave Cross, E<lt>dave@mag-sol.comE<gt>
