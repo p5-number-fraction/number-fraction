@@ -3,10 +3,10 @@ my $build = Module::Build->new(
   module_name => 'Number::Fraction',
   license => 'perl',
   requires => {
-    perl          => '5.8.6',
-    Carp          => 0,
-    overload      => 0,
-    Moose         => 0,
+    perl     => '5.8.6',
+    Carp     => 0,
+    overload => 0,
+    Moo      => 0,
   },
   build_requires => {
     'Test::More'  => 0,
