@@ -7,14 +7,15 @@ my $build = Module::Build->new(
     Carp     => 0,
     overload => 0,
     Moo      => 0,
+    MooX::Types::MooseLike::Base => 0,
   },
   build_requires => {
     'Test::More'  => 0,
+    'Test::Warn'          => 0,
   },
   build_recommends => {
     'Test::Pod'           => 0,
     'Test::Pod::Coverage' => 0,
-    'Test::Warn'          => 0,
   },
   create_makefile_pl => 'traditional',
   meta_merge => {
