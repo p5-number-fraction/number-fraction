@@ -7,8 +7,10 @@ WriteMakefile
   'VERSION_FROM' => 'lib/Number/Fraction.pm',
   'PREREQ_PM' => {
                    'Carp' => 0,
-                   'Moose' => 0,
+                   'Moo' => 0,
+                   'MooX::Types::MooseLike::Base' => 0,
                    'Test::More' => 0,
+                   'Test::Warn' => 0,
                    'overload' => 0
                  },
   'INSTALLDIRS' => 'site',

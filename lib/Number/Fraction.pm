@@ -165,9 +165,9 @@ For example:
    0.5  ** '2/1' Returns a Number::Fraction ('1/4')
    0.25 ** '1/2' Returns a Number::Fraction ('1/2')
 
-=head2 Version 2: Now With Added Moose
+=head2 Version 3: Now With Added Moo
 
-Version 2 of Number::Fraction has been reimplemented using Moose. You should
+Version 3 of Number::Fraction has been reimplemented using Moo. You should
 see very little difference in the way that the class works. The only difference
 I can see is that C<new> used to return C<undef> if it couldn't create a valid
 object from its arguments, it now dies. If you aren't sure of the values that
@@ -188,7 +188,7 @@ use Carp;
 use Moo;
 use MooX::Types::MooseLike::Base qw/Int/;
 
-our $VERSION = '3.0.0';
+our $VERSION = '3.0.1';
 
 my $_mixed = 0;
 
