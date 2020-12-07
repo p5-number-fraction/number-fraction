@@ -949,10 +949,6 @@ sub _to_unicode {
   return;
 }
 
-
-no Moose;
-__PACKAGE__->meta->make_immutable;
-
 1;
 __END__
 
