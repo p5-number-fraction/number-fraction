@@ -188,7 +188,7 @@ use Carp;
 use Moo;
 use MooX::Types::MooseLike::Base qw/Int/;
 
-our $VERSION = '3.0.1';
+our $VERSION = '3.0.2';
 
 my $_mixed = 0;
 
