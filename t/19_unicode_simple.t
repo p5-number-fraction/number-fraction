@@ -52,4 +52,13 @@ cmp_ok ($f, '==', 3 / 5, "VULGAR FRACTION THREE FIFTHS");
 $f = '⅘';
 cmp_ok ($f, '==', 4 / 5, "VULGAR FRACTION FOUR FIFTHS");
 
+$f = '⅐';
+cmp_ok ($f, '==', 1 / 7, "VULGAR FRACTION ONE SEVENTH");
+
+$f = '⅑';
+cmp_ok ($f, '==', 1 / 9, "VULGAR FRACTION ONE NINTH");
+
+$f = '⅒';
+cmp_ok ($f, '==', 1 / 10, "VULGAR FRACTION ONE TENTH");
+
 done_testing();
