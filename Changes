@@ -1,3 +1,7 @@
+2020-12-08  Dave Cross <dave@perlhacks.com>
+
+        * We use regex features that are only available in 5.10
+
 2020-12-07  Dave Cross <dave@perlhacks.com>
 
         * Removed the last remnants of Moose from the code

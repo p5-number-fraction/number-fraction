@@ -180,7 +180,7 @@ C<eval { ... }> block (or using something equivalent like L<Try::Tiny>).
 
 package Number::Fraction;
 
-use 5.006;
+use 5.010;
 use strict;
 use warnings;
 
@@ -188,7 +188,7 @@ use Carp;
 use Moo;
 use MooX::Types::MooseLike::Base qw/Int/;
 
-our $VERSION = '3.0.2';
+our $VERSION = '3.0.3';
 
 my $_mixed = 0;
 
