@@ -150,7 +150,7 @@ power of ten component (like 1.234e45, thes numbers will simply fail). Such that
 
   ('5⅞' ** '1¼') ** '⅘'
 
-will produce stilil the right fraction!
+will produce still the right fraction!
 
 In a future version, I might use automatic rounding to a optional accuracy, so
 that it also works for less forced examples as the above. One could still use
