@@ -368,7 +368,7 @@ around BUILDARGS => sub {
       return $class->$orig({ num => $_[0] * $_[2] + $_[1], den => $_[2] });
     }
     else {
-      croak "Revise your code: 3 arguments will become mixed-fraction feature!";
+      croak "Revise your code: 3 arguments is a mixed-fraction feature!";
     }
   }
   if (@_ >= 2) {
