@@ -544,7 +544,7 @@ sub to_unicode_mixed {
 
 =head2 to_quarters
 
-=head2 to_eights
+=head2 to_eighths
 
 =head2 to_thirds
 
@@ -567,7 +567,10 @@ sub to_fifths   { return shift->to_simple(5) }
 
 sub to_sixths   { return shift->to_simple(6) }
 
-sub to_eights   { return shift->to_simple(8) }
+sub to_eighths  { return shift->to_simple(8) }
+
+# Typo retained for backwards compatibility
+sub to_eights   { return shift->to_eighths }
 
 =head2 to_simple
 
