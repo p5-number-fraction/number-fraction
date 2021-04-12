@@ -70,7 +70,7 @@ If you use the module in your program in the usual way
 
   use Number::Fraction;
 
-you can then create fraction objects using C<Number::Fraction->new> in
+you can then create fraction objects using C<Number::Fraction-E<gt>new> in
 a number of ways.
 
   my $f1 = Number::Fraction->new(1, 2);

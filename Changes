@@ -4,6 +4,7 @@ v3.0.4  2021-04-?? DAVECROSS
 
     * Changed formatting of this file to follow CPAN::Changes::Spec,
       which means MetaCPAN will show changes on the distribution's page.
+    * Fixed an unescaped > in pod ( > should be written as E<gt> )
 
 v3.0.3   2020-12-08   DAVECROSS
 
