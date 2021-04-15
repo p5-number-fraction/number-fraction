@@ -24,13 +24,10 @@ ok($frac = 6.55, # 2_15/20 + 3_16/20
     "new( 6, 11, 20 )");
 
 my $frac3 = $frac1 + $frac2;
-ok($frac3 == $fract, "adding two farctions created from 3 arguments");
+ok($frac3 == $fract, "adding two fractions created from 3 arguments");
 
-$frac = eval { Number::Fraction->new( 3 .. 6 ) };
-ok($frac != 3.80, # 3 + 4/5
-    "new( 3 .. 6) != 3.80 -- this will never be evaluated, it's bad");
-warning_like { Number::Fraction->new( 3 .. 6 ) }
-  {carped => '/too many arguments/'},
-  "Warning omited: 'too many arguments will raise an exception'";
+$frac = eval { Number::Fraction->new( 3 .. 5 ) };
+ok($frac == 3.80, # 3 + 4/5
+    "new( 3 .. 5 ) != 3.80 -- this will never be evaluated, it's bad");
 
 done_testing();
