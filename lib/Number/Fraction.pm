@@ -186,9 +186,9 @@ use warnings;
 
 use Carp;
 use Moo;
-use MooX::Types::MooseLike::Base qw/Int/;
+use Types::Standard qw/Int/;
 
-our $VERSION = '3.0.5';
+our $VERSION = '3.1.0';
 
 my $_mixed = 0;
 

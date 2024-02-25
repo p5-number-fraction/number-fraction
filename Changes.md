@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Older changes to this project are in Changes.old.
 
+## [3.1.0] - 2024-02-26
+
+### Changed
+
+- Switched to using Types::Standard
+
+### Fixed
+
+- Removed duplicate from MANIFEST
+
 ## [3.0.5] - 2024-02-25
 
 ### Fixed
