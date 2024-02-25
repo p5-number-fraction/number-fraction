@@ -187,6 +187,7 @@ use warnings;
 use Carp;
 use Moo;
 use MooX::Types::MooseLike::Base qw/Int/;
+use Scalar::Util 'blessed';
 
 our $VERSION = '3.0.5';
 
@@ -380,7 +381,7 @@ around BUILDARGS => sub {
     return $class->$orig({ num => $num, den => $den });
   } elsif (@_ == 1) {
     if (ref $_[0]) {
-      if (UNIVERSAL::isa($_[0], $class)) {
+      if (blessed $_[0] and $_[0]->isa($class)) {
         return $class->$orig({ num => $_[0]->{num}, den => $_[0]->{den} });
       } else {
         croak "Can't make a $class from a ", ref $_[0];
@@ -634,7 +635,7 @@ sub add {
   my ($l, $r, $rev) = @_;
 
   if (ref $r) {
-    if (UNIVERSAL::isa($r, ref $l)) {
+    if (blessed $r and $r->isa(ref $l)) {
       return (ref $l)->new($l->{num} * $r->{den} + $r->{num} * $l->{den},
                            $r->{den} * $l->{den});
     } else {
@@ -663,7 +664,7 @@ sub mult {
   my ($l, $r, $rev) = @_;
 
   if (ref $r) {
-    if (UNIVERSAL::isa($r, ref $l)) {
+    if (blessed $r and $r->isa(ref $l)) {
       return (ref $l)->new($l->{num} * $r->{num},
                            $l->{den} * $r->{den});
     } else {
@@ -692,7 +693,7 @@ sub subtract {
   my ($l, $r, $rev) = @_;
 
   if (ref $r) {
-    if (UNIVERSAL::isa($r, ref $l)) {
+    if (blessed $r and $r->isa(ref $l)) {
       return (ref $l)->new($l->{num} * $r->{den} - $r->{num} * $l->{den},
                            $r->{den} * $l->{den});
     } else {
@@ -722,7 +723,7 @@ sub div {
   my ($l, $r, $rev) = @_;
 
   if (ref $r) {
-    if (UNIVERSAL::isa($r, ref $l)) {
+    if (blessed $r and $r->isa(ref $l)) {
       die "FATAL ERROR: Division by zero" if $r->{num} == 0;
       return (ref $l)->new($l->{num} * $r->{den},
                            $l->{den} * $r->{num});
@@ -761,7 +762,7 @@ sub exp {
     return $r ** $l->to_num;
   }
 
-  if (UNIVERSAL::isa($r, ref $l)) {
+  if (blessed $r and $r->isa(ref $l)) {
     if ($r->{den} == 1) {
       return $l ** $r->to_num;
     } else {
@@ -773,7 +774,7 @@ sub exp {
     croak "Can't raise $l to the power $r\n";
   }
 
-  my $expn = UNIVERSAL::isa($r, ref $l) ? $r->to_num : $r;
+  my $expn = blessed($r) && $r->isa(ref $l) ? $r->to_num : $r;
   my $pure = eval {
     # this is cheating, works when numerator and denominator look like integers
     (ref $l)->new( $l->{num} ** $expn, $l->{den} ** $expn )
@@ -835,7 +836,7 @@ sub int {
 sub _frac_lt {
   my ($l, $r, $rev ) = @_;
   my ($l_cnt, $r_cnt);
-  if (UNIVERSAL::isa($r, ref $l)) {
+  if (blessed($r) and $r->isa(ref $l)) {
     $l_cnt = $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0);
     $r_cnt = $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0);
   } else {
@@ -849,7 +850,7 @@ sub _frac_lt {
 sub _frac_gt {
   my ($l, $r, $rev ) = @_;
   my ($l_cnt, $r_cnt);
-  if (UNIVERSAL::isa($r, ref $l)) {
+  if (blessed($r) and $r->isa(ref $l)) {
     $l_cnt = $l->{num} * CORE::abs $r->{den} * ($l->{den} <=> 0);
     $r_cnt = $r->{num} * CORE::abs $l->{den} * ($r->{den} <=> 0);
   } else {
